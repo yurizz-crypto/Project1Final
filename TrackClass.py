@@ -37,3 +37,26 @@ class Track:
         seconds = int(self.__duration[colon_index + 1:])
 
         return minutes * 60 + seconds
+    
+    @staticmethod
+    def fromDict(data: dict):
+        return Track(
+            data["title"],
+            data["main_artist"],
+            data["album"],
+            data["duration"],
+            data.get("additional_artists", [])
+        )
+
+    def __str__(self, compact: bool = False) -> str:
+        additional_artists = "None"
+        if self.__additional_artists:
+            additional_artists = ""
+            for artist in self.__additional_artists:
+                additional_artists += "," + artist
+                
+        if compact:
+            return f"{self.getTitle()} - {self.getArtist()} ({self.getDuration()})"
+        else:
+            return (f"\nTitle: {self.getTitle()}\nArtist: {self.getArtist()}\nAlbum: {self.getAlbum()}\n"
+                    f"Duration: {self.getDuration()}\nAdditional Artists: {additional_artists}")
