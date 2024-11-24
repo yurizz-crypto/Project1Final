@@ -16,3 +16,12 @@ class Track:
         if not value:
             raise ValueError(f"{field_name} cannot be empty.")
         return value
+    
+    def toDict(self):
+        return {
+            "title": self.__title,
+            "main_artist": self.__artist,
+            "additional_artists": self.__additional_artists,
+            "album": self.__album,
+            "duration": self.__duration
+        }
