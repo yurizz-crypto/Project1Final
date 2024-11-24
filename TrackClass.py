@@ -25,3 +25,15 @@ class Track:
             "album": self.__album,
             "duration": self.__duration
         }
+    
+    def getDurationInSeconds(self):
+        colon_index = -1
+        for i in range(len(self.__duration)):
+            if self.__duration[i] == ":":
+                colon_index = i
+                break
+        
+        minutes = int(self.__duration[:colon_index])
+        seconds = int(self.__duration[colon_index + 1:])
+
+        return minutes * 60 + seconds
