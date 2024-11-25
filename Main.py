@@ -44,3 +44,13 @@ def showMenu(menu: str) -> str:
             print("[{}]".format(str(keys[i])) + " " + MENUS[menu][keys[i]])
     else:
         print("Menu not found.")
+
+def shouldQuit(var: str) -> bool:
+        return (True if var == "q" or var == "Q" else False)
+
+def main():
+    musicLibrary = AVLTree()
+    musicLibrary.load_from_json()
+    playlist = Playlist
+    queue = MusicQueue()
+    # Diri mag Start para sa UI
