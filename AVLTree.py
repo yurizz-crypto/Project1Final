@@ -96,8 +96,17 @@ class AVLTree:
             
         return node
 
-    def compareTracks(self):
-        pass
+    def compareTracks(self, track1: Track, track2: Trackf):
+        if track1.getTitle() != track2.getTitle():
+            return track1.getTitle() < track2.getTitle()
+        
+        if track1.getArtist() != track2.getArtist():
+            return track1.getArtist() < track2.getArtist()
+        
+        if track1.getAlbum() != track2.getAlbum():
+            return track1.getAlbum() < track2.getAlbum()
+        
+        return track1.getDuration() < track2.getDuration()
 
     def insert(self):
         pass
