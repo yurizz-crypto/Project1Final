@@ -17,14 +17,6 @@ class Track:
             raise ValueError(f"{field_name} cannot be empty.")
         return value
     
-    def toDict(self):
-        return {
-            "title": self.__title,
-            "main_artist": self.__artist,
-            "additional_artists": self.__additional_artists,
-            "album": self.__album,
-            "duration": self.__duration
-        }
     
     def getDurationInSeconds(self):
         colon_index = -1
@@ -38,11 +30,20 @@ class Track:
 
         return minutes * 60 + seconds
     
+    def toDict(self):
+        return {
+            "title": self.__title,
+            "artist": self.__artist,
+            "additional_artists": self.__additional_artists,
+            "album": self.__album,
+            "duration": self.__duration
+        }
+    
     @staticmethod
     def fromDict(data: dict):
         return Track(
             data["title"],
-            data["main_artist"],
+            data["artist"],
             data["album"],
             data["duration"],
             data.get("additional_artists", [])
