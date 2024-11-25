@@ -51,11 +51,6 @@ class MusicQueue:
         self.__playing = newPlay
 
 
-    # load to json
-    def loadToJS(self):
-        with open("playlist.json", "r") as file:
-            return json.load(file)
-
     def convertToSeconds(self, timeStr):
         """Convert a time string (MM:SS) to total seconds without any built-in functions."""
         colon_index = 0
@@ -190,4 +185,15 @@ class MusicQueue:
                 self.__currentTrackNode = self.__head
             else:
                 self.__currentTrackNode = None  # No next track available
+    
+    def addTrackToQueue(self, track):
+        """Helper method to add a track to the queue."""
+        new_node = Node(track)
+        if self.__head is None:
+            self.__head = new_node
+            self.tail = new_node
+        else:
+            self.tail.next = new_node
+            self.tail = new_node
+    
 
