@@ -29,44 +29,44 @@ class TrackLink:
             self.__head = None
             self.__size = 0
 
-    def add(self, track):
-        if self.__check_track(track.getTitle(), track.getArtist(), track.getAlbom()):
+        def add(self, track):
+            if self.__check_track(track.getTitle(), track.getArtist(), track.getAlbum()):
 
-            if not self.__head:
-                self.__head = track
-            else:
-                current = self.__head
-                while current.next:
-                    current = current.next
-                current.next = track
+                if not self.__head:
+                    self.__head = track
+                else:
+                    current = self.__head
+                    while current.next:
+                        current = current.next
+                    current.next = track
 
-        self.__size += 1
-        return True
+            self.__size += 1
+            return True
 
-    def __check_track(self, title, artist, album):
-        current = self.__head
-        while current:
-            if current.getTitle()== title and current.getArtist() == artist and current.getAlbum() == album:
-                return False
-            current = current.next
-        return False
-    
-    def getPlaylistName(self):
-        return self.__playlist_name
-    
-    def getTotalDuration(self):
-        minutes = self.__total_duration // 60
-        seconds = self.__total_duration % 60
-        return f"{minutes} min {seconds} sec"
-    
-    def addTrack(self):
-        pass
+        def __check_track(self, title, artist, album):
+            current = self.__head
+            while current:
+                if current.getTitle()== title and current.getArtist() == artist and current.getAlbum() == album:
+                    return False
+                current = current.next
+            return False
+        
+        def getPlaylistName(self):
+            return self.__playlist_name
+        
+        def getTotalDuration(self):
+            minutes = self.__total_duration // 60
+            seconds = self.__total_duration % 60
+            return f"{minutes} min {seconds} sec"
+        
+        def addTrack(self):
+            pass
 
-    def removeTrack(self):
-        pass
+        def removeTrack(self):
+            pass
 
-    def updateTotalDuration(self):
-        pass
+        def updateTotalDuration(self):
+            pass
 
-    def __str__(self) -> str:
-        pass
+        def __str__(self) -> str:
+            pass
