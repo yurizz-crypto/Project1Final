@@ -6,6 +6,25 @@ class Playlist:
         self.__playlist_name = playlist_name
         self.__tracks = []
         self.__total_duration = 0
+
+    class TrackLink:
+        def __init__(self):
+            self.__head = None
+            self.__size 0
+
+        def add(self, track):
+            if self.__check_track(track.getTitle(), track.getArtist(), track.getAlbom()):
+
+            if not self.__head:
+                self.__head = track
+            else:
+                current = self.__head
+                while current.next:
+                    current = current.next
+                current.next = track
+
+            self.__size += 1
+            return True
     
     def getPlaylistName(self):
         return self.__playlist_name
