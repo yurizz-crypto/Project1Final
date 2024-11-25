@@ -137,8 +137,57 @@ class MusicQueue:
 
     # Shuffle the queue (optional)
     def shuffleQueue(self):
-        pass
+        if self.__head is None:
+            return  # No tracks to shuffle
+
+        # Convert linked list to array
+        tracks = []
+        current = self.__head
+        while current is not None:
+            tracks.append(current.track)
+            current = current.next
+
+        # Shuffle the array using a simple algorithm (Fisher-Yates)
+        n = len(tracks)
+        for i in range(n - 1, 0, -1):
+            j = self.getRandomIndex(i + 1)  # Get a random index from 0 to i
+            tracks[i], tracks[j] = tracks[j], tracks[i]  # Swap
+
+        # Rebuild the linked list from the shuffled array
+        self.__head = None
+        self.tail = None
+        for track in tracks:
+            self.addTrack(track)
+
+
+
+    def getRandomIndex(self, max_value):
+        """ Get a random index from 0 to max_value also ensuring their are new sets of shuffled queues every now and then """
+        # Simple linear congruential generator (LCG) for demonstration
+        seed = 123456789  # Example seed
+        a = 1664525
+        c = 1013904223
+        m = 2**32
+
+        # Generate a pseudo-random number
+        seed = (a * seed + c) % m
+        return seed % max_value
+ 
 
     # Play the next track
     def playNextTrack(self):
-        pass
+        if self.__currentTrackNode is None:  # If there is no current track
+            if self.__head is not None:  # If the queue is not empty, start with the head
+                self.__currentTrackNode = self.__head
+            else:
+                return  # No tracks to play
+
+        # Move to the next track
+        if self.__currentTrackNode.next is not None:
+            self.__currentTrackNode = self.__currentTrackNode.next
+        else:
+            if self.__repeat:  # If repeat is enabled, loop back to the head
+                self.__currentTrackNode = self.__head
+            else:
+                self.__currentTrackNode = None  # No next track available
+
