@@ -1,8 +1,31 @@
+from TrackClass import Track
 class AVLNode:
-    def __init__(self):
-        pass
+    def __init__(self, track: Track):
+        self.__track = track
+        self.__left = None
+        self.__right = None
+        self.__height = 1
     
-    # Getters and Setter
+    def getTrack(self):
+        return self.__track
+
+    def getLeft(self):
+        return self.__left
+
+    def getRight(self):
+        return self.__right
+
+    def setLeft(self, left):
+        self.__left = left
+
+    def setRight(self, right):
+        self.__right = right
+
+    def getHeight(self):
+        return self.__height
+
+    def setHeight(self, height):
+        self.__height = height
 
 class AVLTree:
     def __init__(self):
