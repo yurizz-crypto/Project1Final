@@ -93,6 +93,8 @@ class AVLTree:
             else:
                 node.setRight(self.rotateRight(node.getRight()))
                 return self.rotateLeft(node)
+            
+        return node
 
     def compareTracks(self):
         pass
