@@ -42,6 +42,14 @@ class TrackLink:
 
         self.__size += 1
         return True
+
+    def __check_track(self, title, artist, album):
+        current = self.__head
+        while current:
+            if current.getTitle()== title and current.getArtist() == artist and current.getAlbum() == album:
+                return False
+            current = current.next
+        return False
     
     def getPlaylistName(self):
         return self.__playlist_name
