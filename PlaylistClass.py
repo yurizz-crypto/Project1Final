@@ -23,6 +23,14 @@ class Playlist:
             if i.getTitle() == track.getTitle():
                 count += 1
             return count > 1
+    
+    def addTrack(self, track):
+        if track not in self.__tracks:
+            self.__tracks += [track]
+            self.update_total_duration()
+            self.save_to_json()
+            return track
+        return False
             
 class TrackLink:
         def __init__(self):
