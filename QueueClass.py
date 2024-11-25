@@ -119,8 +119,17 @@ class MusicQueue:
             self.addTrack(track)
 
     # Remove a track from the queue
-    def removeTrack(self):
-        pass
+    def play(self):
+        if not self.__head:
+            print("No tracks in the queue.")
+            return
+        
+        if not self.__currentTrackNode:
+            self.__currentTrackNode = self.__head
+        
+        self.__playing = True
+        print(f"Now Playing: {self.__currentTrackNode.track}")
+
     
     # Get the tail (last track)
     def getTail(self):

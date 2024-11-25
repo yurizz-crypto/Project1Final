@@ -19,18 +19,18 @@ class Playlist:
     class TrackLink:
         def __init__(self):
             self.__head = None
-            self.__size 0
+            self.__size = 0
 
         def add(self, track):
             if self.__check_track(track.getTitle(), track.getArtist(), track.getAlbom()):
 
-            if not self.__head:
-                self.__head = track
-            else:
-                current = self.__head
-                while current.next:
-                    current = current.next
-                current.next = track
+                if not self.__head:
+                    self.__head = track
+                else:
+                    current = self.__head
+                    while current.next:
+                        current = current.next
+                    current.next = track
 
             self.__size += 1
             return True
