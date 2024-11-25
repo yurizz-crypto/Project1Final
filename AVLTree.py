@@ -1,4 +1,5 @@
 from TrackClass import Track
+
 class AVLNode:
     def __init__(self, track: Track):
         self.__track = track
@@ -29,12 +30,19 @@ class AVLNode:
 
 class AVLTree:
     def __init__(self):
-        pass
+        self.__root = None
 
     # Getters
+    def getRoot(self):
+        return self.__root
     
-    def updateHeight(self):
-        pass
+    def getHeight(self, node: AVLNode):
+        return node.getHeight() if node else 0
+    
+    def updateHeight(self, node: AVLNode):
+        leftHeight = self.getHeight(node.getLeft())
+        rightHeight = self.getHeight(node.getRight())
+               
 
     def getBalanceFactor(self):
         pass
