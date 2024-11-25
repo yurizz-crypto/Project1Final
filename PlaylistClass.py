@@ -1,5 +1,6 @@
 import json
 from TrackClass import Track
+import os
 
 class Playlist:
     def __init__(self, playlist_name: str):
@@ -15,7 +16,14 @@ class Playlist:
     
     def getTracks(self):
         return self.__tracks
-
+    
+    def countSameTitle(self, track: Track):
+        count = 0
+        for i in self.__tracks:
+            if i.getTitle() == track.getTitle():
+                count += 1
+            return count > 1
+            
     class TrackLink:
         def __init__(self):
             self.__head = None
