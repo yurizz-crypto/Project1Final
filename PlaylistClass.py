@@ -5,7 +5,16 @@ class Playlist:
     def __init__(self, playlist_name: str):
         self.__playlist_name = playlist_name
         self.__tracks = []
-        self.__total_duration = 0
+        self.__total_duration = "00:00"
+    
+    def getPlaylistName(self):
+        return self.__playlist_name
+    
+    def getTotalDuration(self):
+        return self.__total_duration
+    
+    def getTracks(self):
+        return self.__tracks
 
     class TrackLink:
         def __init__(self):
