@@ -52,9 +52,13 @@ class Track:
         additional_artists = "None"
         if self.__additional_artists:
             additional_artists = ""
+            index = 0
             for artist in self.__additional_artists:
-                additional_artists += "," + artist
-                
+                if index > 0:
+                    additional_artists += ","
+                additional_artists += artist
+                index += 1
+
         if compact:
             return f"{self.getTitle()} - {self.getArtist()} ({self.getDuration()})"
         else:
