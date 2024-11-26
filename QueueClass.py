@@ -113,7 +113,6 @@ class MusicQueue:
         for track in playlist:
             self.addTrack(track)
 
-    # Remove a track from the queue
     def play(self):
         if not self.__head:
             print("No tracks in the queue.")
@@ -124,6 +123,12 @@ class MusicQueue:
         
         self.__playing = True
         print(f"Now Playing: {self.__currentTrackNode.track}")
+
+    # Pause Currently Playing track
+    def pause(self):
+        if self.__playing:
+            self.__playing = False
+            print(f"Paused: {self.__currentTrackNode.track}")
 
     
     # Get the tail (last track)
