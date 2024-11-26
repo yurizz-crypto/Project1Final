@@ -176,21 +176,36 @@ class MusicQueue:
  
 
     # Play the next track
-    def playNextTrack(self):
-        if self.__currentTrackNode is None:  # If there is no current track
-            if self.__head is not None:  # If the queue is not empty, start with the head
-                self.__currentTrackNode = self.__head
-            else:
-                return  # No tracks to play
+    def nextTrack(self):
+        if not self.__currentTrackNode:
+            print("No tracks in the queue.")
+            return
 
-        # Move to the next track
-        if self.__currentTrackNode.next is not None:
-            self.__currentTrackNode = self.__currentTrackNode.next
+        # current_track = self.__currentTrackNode.track
+
+        if self.__repeat:
+            self.__currentTrackNode = self.__currentTrackNode.next or self.__head
+            print(f"Repeat is enabled. Playing next track: {self.__currentTrackNode.track}")
+            return
+
+        next_node = self.__currentTrackNode.next
+        if self.__currentTrackNode == self.__head:
+            self.__head = next_node
+            if self.__head:
+                self.__head.prev = None
+        else: 
+            if self.__currentTrackNode.prev:
+                self.__currentTrackNode.prev.next = next_node
+            if next_node:
+                next_node.prev = self.__currentTrackNode.prev
+
+        self.__currentTrackNode = next_node
+
+        if self.__currentTrackNode:
+            print(f"Next track: {self.__currentTrackNode.track}")
         else:
-            if self.__repeat:  # If repeat is enabled, loop back to the head
-                self.__currentTrackNode = self.__head
-            else:
-                self.__currentTrackNode = None  # No next track available
+            print("No more tracks left.")
+            self.__playing = False
     
     def addTrackToQueue(self, track):
         """Helper method to add a track to the queue."""
