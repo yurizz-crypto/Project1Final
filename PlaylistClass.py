@@ -58,6 +58,37 @@ class TrackLink:
                     return False
                 current = current.next
             return False
+
+        def  remove(self, title):
+            if not self.__head:
+                return False
+
+            if  self.__head.getTitle() == title:
+                self.__head = self.__head.next
+                self.__size -= 1
+                return True
+
+        current = self.__head
+        while current.next:
+            if current.next.getTitle() == title:
+                current.next = current.next.next
+                self.__size -= 1
+                return True
+            current = current.next
+        return False
+
+        def __str__(self):
+            result = " "
+            current = self.__head
+            while current:
+                result += str(current) + "\n"
+                current = current.next
+            return result.strip()
+
+        def get_head(self):
+            return self.__head
+            
+        
         
         def getPlaylistName(self):
             return self.__playlist_name
