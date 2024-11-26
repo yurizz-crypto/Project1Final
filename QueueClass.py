@@ -127,8 +127,14 @@ class MusicQueue:
 
     
     # Get the tail (last track)
-    def getTail(self):
-        pass
+    def Tail(self, head):
+        """Find the tail node of the linked list."""
+        if not head:
+            return None
+        current = head
+        while current.next:
+            current = current.next
+        return current
 
     # Shuffle the queue (optional)
     def shuffleQueue(self):
