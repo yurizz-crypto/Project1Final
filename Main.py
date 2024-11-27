@@ -152,3 +152,17 @@ def main():
                             new_playlist = Playlist(playlist_name)
                             new_playlist.saveToJson()
                             print(f"Playlist '{playlist_name}' created successfully.")
+            
+            case "3":
+                while True:
+                    new_track = addTrack()
+                    if new_track is None:
+                        break
+                    elif new_track:
+                        musicLibrary.addTrack(new_track)
+                        print("Track added successfully!\n")
+                        if input("Add another track? (y/n): ") == "n" or input("Add another track (y/): ") == "N":
+                            break
+                        musicLibrary.saveToJson()
+                    else: 
+                        print("Track already exists.")
