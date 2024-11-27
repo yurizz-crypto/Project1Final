@@ -111,3 +111,24 @@ def main():
         print("\n<==========Listen to Music==========>")
         showMenu("musicLibrary")
         opt = input("\nEnter choice: ")
+
+        match opt:
+            #case "0"
+
+
+            #case "1"
+
+            case "2":
+                # The Diplay this if the input is 2
+                # 1: "Play a playlist",
+                # 2: "Create a New Playlist",
+                # 3: "View All Playlists",
+                # 4: "Add Track to a Playlist",
+                # 5: "Delete a Playlist",
+                # 6: "Display a Playlist",
+                # 7: "Delete a Track in Playlist",
+                # 8: "Return"
+                while True:
+                    print("\n<---------Playlists--------->")
+                    showMenu("playlists")
+                    opt = input("\nEnter choice: ")
