@@ -113,8 +113,10 @@ def main():
         opt = input("\nEnter choice: ")
 
         match opt:
-            #case "0"
-
+            case "0":
+                musicLibrary.saveToJson()
+                print("Exiting Program...")
+                break
 
             #case "1"
 
