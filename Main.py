@@ -132,3 +132,21 @@ def main():
                     print("\n<---------Playlists--------->")
                     showMenu("playlists")
                     opt = input("\nEnter choice: ")
+
+                    if opt == "0":
+                        break
+
+                    elif opt == "1":
+                        pass
+
+                    elif opt == "2":  # Create a New Playlist
+                        playlist_name = input("Enter new playlist name ('q' to cancel): ")
+                        if should_quit(playlist_name):
+                            continue
+
+                        if playlist_name in Playlist.getPlaylists():
+                            print(f"Playlist '{playlist_name}' already exists.")
+                        else:
+                            new_playlist = Playlist(playlist_name)
+                            new_playlist.saveToJson()
+                            print(f"Playlist '{playlist_name}' created successfully.")
