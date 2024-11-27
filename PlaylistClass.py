@@ -87,8 +87,25 @@ class Playlist:
                 "track:"[track.toDict() for track in self.getTracks()]
                 }, file, indent=2)
 
+    @staticmethod
+    def loadFromJson(playlistname: str):
+        filename = f"Data/Playlists/{self.getName()}.json"
+        try:
+            with open (filename, 'r') as file:
+            data = json.load(file)
+            playlist = Playlist(data["name"])
+            playlist.__total_duration = data["total_duration"]
+            for track_data in data["tracks"]:
+                track = Track.fromDict(track_data)
+                playlist.addTrack(track)
+            return playlist
+        except FilenotFoundError:
+            print(f"File {filename}not found.")
 
-        
+        return None
+
+
+            
         def getPlaylistName(self):
             return self.__playlist_name
         
