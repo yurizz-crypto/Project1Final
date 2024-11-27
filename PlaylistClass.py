@@ -104,6 +104,22 @@ class Playlist:
 
         return None
 
+        @staticmethod
+        def displayPlaylists(playlists: list, page: int = 1, items_per_page: int = 10):
+            total_pages = (len(playlists) + items_per_pages - 1)//items_per_page
+            if page < 1 or page > total_pages:
+                return False
+
+            start_index = (page - 1) * items_per_page
+            end_index = start_index + items_per_page
+            page_playlists = playlists[start_index:end_index]
+
+            display = "List of Playlists:\n\n"
+            current_index = start_index + 1
+            for playlist in page_playlists:
+                display += f"{current_index}{playlist}\n"
+                current_index += 1
+
 
             
         def getPlaylistName(self):
