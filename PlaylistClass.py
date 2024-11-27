@@ -44,6 +44,21 @@ class Playlist:
                 else:
                     return [track], None
             
+            mid = len(tracks) // 2
+            left, removed_left = divideAndConquer(tracks[:mid])
+            right, removed_right = divideAndConquer(tracks[mid:])
+
+            removed_track = removed_left or  removed_right
+            return left + right, removed_track
+        
+        new_tracks, removed_track = divideAndConquer(self.__tracks)
+
+        if removed_track:
+            self.__tracks = new_tracks
+            self.updateTotalDuration()
+            self.saveToJson()
+        return removed_track
+            
 class TrackLink:
         def __init__(self):
             self.__head = None
