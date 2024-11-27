@@ -31,6 +31,18 @@ class Playlist:
             self.save_to_json()
             return track
         return False
+    
+    def removeTrack(self, title: str, artist: str):
+        def divideAndConquer(tracks):
+            if not tracks:
+                return [], None
+            
+            if len(tracks) == 1:
+                track = tracks[0]
+                if track.getTitle() == title and track.getArtist() == artist:
+                    return [], track
+                else:
+                    return [track], None
             
 class TrackLink:
         def __init__(self):
