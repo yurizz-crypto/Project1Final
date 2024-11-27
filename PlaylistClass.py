@@ -77,64 +77,17 @@ class Playlist:
             seconds = int(track.getDuration()[3:])
             total_sec += (minutes * 60) + seconds
         self.__total_duration = f"{total_sec // 60:02}:{total_sec % 60:02}"
-            
-class TrackLink:
-        def __init__(self):
-            self.__head = None
-            self.__size = 0
 
-        def add(self, track):
-            if self.__check_track(track.getTitle(), track.getArtist(), track.getAlbum()):
+    def saveToJson(self):
+        filename = f"Data/Playlists/self.getName()}.json"
+        with open(filename, 'w') as file:
+            json.dump({
+                "name":self.__name,
+                "total_duration:"self.__total_duration,
+                "track:"[track.toDict() for track in self.getTracks()]
+                }, file, indent=2)
 
-                if not self.__head:
-                    self.__head = track
-                else:
-                    current = self.__head
-                    while current.next:
-                        current = current.next
-                    current.next = track
 
-            self.__size += 1
-            return True
-
-        def __check_track(self, title, artist, album):
-            current = self.__head
-            while current:
-                if current.getTitle()== title and current.getArtist() == artist and current.getAlbum() == album:
-                    return False
-                current = current.next
-            return False
-
-        def  remove(self, title):
-            if not self.__head:
-                return False
-
-            if  self.__head.getTitle() == title:
-                self.__head = self.__head.next
-                self.__size -= 1
-                return True
-
-        current = self.__head
-        while current.next:
-            if current.next.getTitle() == title:
-                current.next = current.next.next
-                self.__size -= 1
-                return True
-            current = current.next
-        return False
-
-        def __str__(self):
-            result = " "
-            current = self.__head
-            while current:
-                result += str(current) + "\n"
-                current = current.next
-            return result.strip()
-
-        def get_head(self):
-            return self.__head
-            
-        
         
         def getPlaylistName(self):
             return self.__playlist_name
