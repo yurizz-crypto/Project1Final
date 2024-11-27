@@ -107,5 +107,7 @@ def addTrack():
         return formatted_minutes + ":" + formatted_seconds
 
 def main():
-    # Diri mag Start para sa UI
-    pass
+    while True:
+        print("\n<==========Listen to Music==========>")
+        showMenu("musicLibrary")
+        opt = input("\nEnter choice: ")
