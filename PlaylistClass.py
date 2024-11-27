@@ -73,33 +73,31 @@ class Playlist:
         total_sec = 0
         track: Track
         for track in self.getTracks():
-            minutes = int(track.getDuration()[:2])
-            seconds = int(track.getDuration()[3:])
-            total_sec += (minutes * 60) + seconds
+            total_sec += track.getDurationinSeconds()
         self.__total_duration = f"{total_sec // 60:02}:{total_sec % 60:02}"
-
+            
     def saveToJson(self):
-        filename = f"Data/Playlists/self.getName()}.json"
+        filename = f"Data/Playlists/{self.getName()}.json"
         with open(filename, 'w') as file:
             json.dump({
                 "name":self.__name,
-                "total_duration:"self.__total_duration,
-                "track:"[track.toDict() for track in self.getTracks()]
+                "total_duration":self.__total_duration,
+                "track":[track.toDict() for track in self.getTracks()]
                 }, file, indent=2)
 
     @staticmethod
     def loadFromJson(playlistname: str):
-        filename = f"Data/Playlists/{self.getName()}.json"
+        filename = f"Data/Playlists/{playlistname}.json"
         try:
             with open (filename, 'r') as file:
-            data = json.load(file)
-            playlist = Playlist(data["name"])
-            playlist.__total_duration = data["total_duration"]
-            for track_data in data["tracks"]:
-                track = Track.fromDict(track_data)
-                playlist.addTrack(track)
-            return playlist
-        except FilenotFoundError:
+                data = json.load(file)
+                playlist = Playlist(data["name"])
+                playlist.__total_duration = data["total_duration"]
+                for track_data in data["tracks"]:
+                    track = Track.fromDict(track_data)
+                    playlist.addTrack(track)
+                return playlist
+        except FileNotFoundError:
             print(f"File {filename}not found.")
 
         return None
