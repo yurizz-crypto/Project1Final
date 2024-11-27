@@ -68,6 +68,15 @@ class Playlist:
         except Exception as e:
             print(f"An error occurred while deleting the playlists: {e}")
         return False
+    
+    def updateTotalDuration(self):
+        total_sec = 0
+        track: Track
+        for track in self.getTracks():
+            minutes = int(track.getDuration()[:2])
+            seconds = int(track.getDuration()[3:])
+            total_sec += (minutes * 60) + seconds
+        self.__total_duration = f"{total_sec // 60:02}:{total_sec % 60:02}"
             
 class TrackLink:
         def __init__(self):
