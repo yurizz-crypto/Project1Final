@@ -120,6 +120,15 @@ class Playlist:
                 display += f"{current_index}{playlist}\n"
                 current_index += 1
 
+            display += f"\n<Page{page of {total_pages}>\n"
+
+            if page > 1:
+                display += f"[11] Previous Page\n"
+            if page < total_pages:
+                display += f"[12] Next Page\n"
+
+            return display
+
 
             
         def getPlaylistName(self):
