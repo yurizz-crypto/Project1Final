@@ -156,8 +156,18 @@ class AVLTree:
     def sort(self):
         pass
 
-    def getDuplicates(self):
-        pass
+    def getDuplicates(self, node: AVLNode, title) -> list:
+        duplicates = []
+        if node:
+            duplicates += self.getDuplicates(node.getLeft(), title)
+
+            if node.getTrack().getTitle() == title:
+                duplicates += [node.getTrack()]
+
+            duplicate += self.getDuplicates(node.getRight(), title)
+        
+        return duplicates
+    
 
     def shuffle(self, node: AVLNode, result: list):
         pass
