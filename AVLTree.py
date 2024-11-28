@@ -1,4 +1,5 @@
 from TrackClass import Track
+from PlaylistClass import Playlist
 
 class AVLNode:
     def __init__(self, track: Track):
@@ -150,8 +151,16 @@ class AVLTree:
 
         return self.autoRotate(node)
 
-    def removeTrack():
-        pass
+    def removeTrack(self, track: Track):
+        self.__root = self.delete(self.__root, track)
+        
+        playlists = Playlist.getPlaylists()
+        for playlist_name in playlists:
+            playlist = Playlist.loadFromJson(playlist_name)
+            if playlist:
+                removed_track = playlist.removeTrack(track.getTitle(), track.getArtist())
+                if removed_track:
+                    print(f"Removed '{track.getTitle()}' by {track.getArtist()} from playlist '{playlist_name}'.")
 
     def sort(self):
         pass
