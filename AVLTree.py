@@ -128,8 +128,27 @@ class AVLTree:
 
         return False
     
-    def delete():
-        pass
+    def delete(self, node: AVLNode, track: Track):
+        if not node:
+            return node
+
+        if self.compareTracks(track, node.getTrack()):
+            node.setLeft(self.delete(node.getLeft(), track))
+        elif self.compareTracks(node.getTrack(), track):
+            node.setRight(self.delete(node.getRight(), track))
+        else:
+            if not node.getLeft():
+                return node.getRight()
+            elif not node.getRight():
+                return node.getLeft()
+
+            min_node = self.getMinNode(node.getRight())
+            node.getTrack().__dict__.update(min_node.getTrack().__dict__)
+            node.setRight(self.delete(node.getRight(), min_node.getTrack()))
+
+        self.updateHeight(node)
+
+        return self.autoRotate(node)
 
     def removeTrack():
         pass
