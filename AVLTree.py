@@ -162,7 +162,20 @@ class AVLTree:
     def shuffle(self, node: AVLNode, result: list):
         pass
     
-    def traverse(self):
+    def traverse(self, node: AVLNode, result: list, order: str):
+        if not node:
+            return
+        
+        self.traverse(node.getLeft(), result, order)
+        result += [node.getTrack()]
+        self.traverse(node.getRight(), result, order)
+
+        if order == "shuffle":
+            n = len(result)
+            for i in range(n - 1, 0, -1):
+                seed = (i * 53 + 23) % 256
+                j = (seed * 41 + 29) % i + 1
+                result[i], result[j] = result[j], result[i]
         
     def getTotalDuration(self):
         def sum_durations(node: AVLNode):
