@@ -110,7 +110,7 @@ class AVLTree:
     def insert(self):
         pass
 
-    def addTrack(self):
+    def addTrack(self, track: Track):
         check = self.searchTrack(track.getTitle(), track.getArtist())
         
         if check == None:
