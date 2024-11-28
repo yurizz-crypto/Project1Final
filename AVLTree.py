@@ -164,7 +164,7 @@ class AVLTree:
             if node.getTrack().getTitle() == title:
                 duplicates += [node.getTrack()]
 
-            duplicate += self.getDuplicates(node.getRight(), title)
+            duplicates += self.getDuplicates(node.getRight(), title)
         
         return duplicates
     
