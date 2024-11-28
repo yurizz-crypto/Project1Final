@@ -120,6 +120,12 @@ class AVLTree:
     
     def delete():
         pass
+    
+    def getMinNode(self, node: AVLNode):
+        current = node
+        while current.getLeft() is not None:
+            current = current.getLeft()
+        return current
 
     def removeTrack():
         pass
