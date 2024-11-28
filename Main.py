@@ -166,3 +166,22 @@ def main():
                         musicLibrary.saveToJson()
                     else: 
                         print("Track already exists.")
+
+            case "4":
+                print(musicLibrary)
+            
+            case "5":
+                print("\n>>> Search for a Track <<<")
+                title = input("Enter Track title ('q' to cancel): ")
+                if should_quit(title):
+                    continue
+
+                duplicates = musicLibrary.getDuplicates(musicLibrary.getRoot(), title)
+                found = musicLibrary.searchTrack(title)
+
+                if len(duplicates) > 1:
+                    showDuplicates(duplicates)
+                elif found: 
+                    print(found)
+                else:
+                    print("Track not found.\n")
