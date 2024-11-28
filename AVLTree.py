@@ -107,10 +107,20 @@ class AVLTree:
         
         return track1.getDuration() < track2.getDuration()
 
-    def insert(self):
-        pass
+    def insert(self, node: AVLNode, track: Track):
+        if not node:
+            return AVLNode(track)
 
-    def addTrack(self, track: Track):
+        if self.compareTracks(track, node.getTrack()):
+            node.setLeft(self.insert(node.getLeft(), track))
+        else:
+            node.setRight(self.insert(node.getRight(), track))
+
+        self.updateHeight(node)
+
+        return self.autoRotate(node)
+
+    def addTrack(self):
         check = self.searchTrack(track.getTitle(), track.getArtist())
         
         if check == None:
@@ -120,12 +130,6 @@ class AVLTree:
     
     def delete():
         pass
-    
-    def getMinNode(self, node: AVLNode):
-        current = node
-        while current.getLeft() is not None:
-            current = current.getLeft()
-        return current
 
     def removeTrack():
         pass
