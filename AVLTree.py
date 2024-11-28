@@ -31,8 +31,7 @@ class AVLNode:
 class AVLTree:
     def __init__(self):
         self.__root = None
-
-    # Getters
+        
     def getRoot(self):
         return self.__root
     
@@ -96,7 +95,7 @@ class AVLTree:
             
         return node
 
-    def compareTracks(self, track1: Track, track2: Trackf):
+    def compareTracks(self, track1: Track, track2: Track):
         if track1.getTitle() != track2.getTitle():
             return track1.getTitle() < track2.getTitle()
         
@@ -112,8 +111,13 @@ class AVLTree:
         pass
 
     def addTrack(self):
-        pass
+        check = self.searchTrack(track.getTitle(), track.getArtist())
+        
+        if check == None:
+            self.__root = self.insert(self.__root, track)
 
+        return False
+    
     def delete():
         pass
 
@@ -136,7 +140,7 @@ class AVLTree:
         pass
 
     def searchTrack(self):
-        pass
+        
 
     # Methods for Storing and Loading using Json
 
