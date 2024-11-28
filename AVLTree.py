@@ -132,14 +132,37 @@ class AVLTree:
 
     def shuffle(self, node: AVLNode, result: list):
         pass
-
-    def getSortedTracks(self):
-        pass
     
-    def getShuffledTracks(self):
-        pass
+    def traverse(self):
+        
+    def getTotalDuration(self):
+        def sum_durations(node: AVLNode):
+            if not node:
+                return 0
+            left_duration = sum_durations(node.getLeft())
+            right_duration = sum_durations(node.getRight())
+            return node.getTrack().getDurationInSeconds() + left_duration + right_duration
+        
+        total_Seconds = sum_durations
 
-    def searchTrack(self):
+    def getSortedTracks(self) -> list:
+        result = []
+        
+    
+    def getShuffledTracks(self) -> list:
+        result = []
+
+    def searchTrack(self, title: str, artist: str | None = None) -> Track:
+        current = self._root
+        while current:
+            track = current.getTrack()
+            if title == track.getTitle() and (artist is None or artist == track.getArtist()):
+                return track
+            if title < track.getTitle():
+                current = current.getLeft()
+            else:
+                current = current.getRight()
+        return None
         
 
     # Methods for Storing and Loading using Json
