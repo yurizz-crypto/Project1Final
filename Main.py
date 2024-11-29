@@ -52,48 +52,6 @@ def showMenu(menu: str) -> str:
             print("[{}]".format(str(keys[i])) + " " + MENUS[menu][keys[i]])
     else:
         print("Menu not found.")
-
-def should_quit(var: str) -> bool:
-    return var == "q" or var == "Q"
-
-def addTrackToPlaylist(musicLibrary: AVLTree, playlist_name: str) -> None:
-    if playlist_name not in Playlist.getPlaylists():
-        print(f"Playlist "{playlist_name}" not found." )
-        return
-        
-    while True:
-          title = input("Enter title of the track ('q' to cancel): ")
-        if should_quit(title):
-            print(f"No track added to the playlist {playlist_name}.\n")
-            break
-
-        duplicates = musicLibrary.getDuplicates(musicLibrary.getRoot(), title)
-        found = musicLibrary.searchTrack(title)
-
-        if len(duplicates) > 1:
-            showDuplicates(duplicates)
-            artist_name = input("\nSpecify track artist ('q' to cancel): ")
-            if should_quit(artist_name):
-                print(f"No track added to the playlist {playlist_name}.")
-                break
-
-            track = musicLibrary.searchTrack(title, artist_name)
-            if track:
-                playlist_obj = Playlist(playlist_name)
-                playlist_obj.addTrack(track)
-                playlist_obj.saveToJson()
-                print("Track added successfully to the playlist.")
-                break
-
-        elif found:
-            playlist_obj = Playlist(playlist_name)
-            playlist_obj.addTrack(found)
-            playlist_obj.saveToJson()
-            print("Track added successfully to the playlist.")
-            break
-
-        else:
-            print("Track not found. Please try again.")
                 
 def showDuplicates(track_list: list):
     print("\nDuplicates:")
