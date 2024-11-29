@@ -142,5 +142,8 @@ class Playlist:
             print(f"Directory {directory} not found.")
         return []
 
-        def __str__(self) -> str:
-            pass
+    def __str__(self) -> str:
+        s = f"\nPlaylist Name: {self.getName()}\nTotal Duration: {self.getTotalDuration()}\nTracks:\n"
+        for track in self.__tracks:
+            s += "\t" + track.__str__(True) + "\n"
+        return s
