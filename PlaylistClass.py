@@ -128,11 +128,19 @@ class Playlist:
 
         return display
 
-            
-        def getPlaylistName(self):
-            return self.__playlist_name
-        
-            pass
+    @staticmethod      
+    def getPlaylistName(directory = "Data/Playlists"):
+        playlist_names = []
+        try:
+            files = os.listdir(directory)
+            for file in files:
+                if len(file) > 5 and file[-5:] == ".json":
+                    playlist_name = file[:-5]
+                    playlist_names += [playlist_name]
+            return playlist_names
+        except FileNotFoundError:
+            print(f"Directory {directory} not found.")
+        return []
 
         def __str__(self) -> str:
             pass
