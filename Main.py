@@ -188,3 +188,47 @@ def main():
                     print(found)
                 else:
                     print("Track not found.\n")
+
+            case "6":
+                print("\n>>> Delete a Track <<<")
+                title = input("Enter title of the track ('q' to cancel): ")
+                if should_quit(title):
+                    print("Deletion Cancelled...\n")
+                    continue
+
+                duplicates = musicLibrary.getDuplicates(musicLibrary.getRoot(), title)
+                found = musicLibrary.searchTrack(title)
+
+                if len(duplicates) > 1:
+                    showDuplicates(duplicates)
+                    artist_name = input("Specify track artist ('q' to cancel): ")
+                    if should_quit(artist_name):
+                        continue
+
+                    track = musicLibrary.searchTrack(title, artist_name)
+                    if track:
+                        musicLibrary.removeTrack(track)
+                        print("Track deleted.\n")
+                        musicLibrary.saveToJson()
+                    else:
+                        print("Artist not found.")
+                elif found:
+                    musicLibrary.removeTrack(found)
+                    print("Track deleted.\n")
+                else:
+                    print("Track not found.\n")
+
+            case "7":
+                playlist_name = input(\nEnter playlist name ('q' to cancel): ")
+                if should_quit(playlist_name):
+                    continue
+
+                addTrackToPlaylist(musicLibrary, playlist_name)
+
+            case _:
+                print("Invalid Option.")
+
+    if __name__ == "__main__":
+        main()
+
+                    
