@@ -1,5 +1,7 @@
 from TrackClass import Track
 from PlaylistClass import Playlist
+import json
+
 
 class AVLNode:
     def __init__(self, track: Track):
@@ -223,10 +225,22 @@ class AVLTree:
                 current = current.getLeft()
             else:
                 current = current.getRight()
-        return None
-        
+        return None 
+    
+    def saveToJson(self, filename="Data/tracks.json"):
+        tracks = self.getSortedTracks()
+        with open(filename, 'w') as file:
+            json.dump([track.toDict() for track in tracks], file, indent=2)
 
-    # Methods for Storing and Loading using Json
+    def loadFromJson(self, filename="Data/tracks.json"):
+        try:
+            with open(filename, 'r') as file:
+                data = json.load(file)
+                for track_data in data:
+                    track = Track.fromDict(track_data)
+                    self.__root = self.insert(self.__root, track)
+        except FileNotFoundError:
+            print(f"File {filename} not found.")
 
     def __str__(self) -> str:
         pass
