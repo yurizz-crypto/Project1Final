@@ -243,4 +243,9 @@ class AVLTree:
             print(f"File {filename} not found.")
 
     def __str__(self) -> str:
-        pass
+        s = f"\n<---------All Tracks--------->\n\nTotal Duration: {self.getTotalDuration()}\n\n"
+        num = 1
+        for track in self.getSortedTracks():
+            s += f"{num}. " + track.__str__(True) + "\n"
+            num += 1
+        return s
