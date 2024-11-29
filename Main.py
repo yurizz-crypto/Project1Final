@@ -121,7 +121,17 @@ def main():
                 print("Exiting Program...")
                 break
 
-            #case "1"
+            case "1":
+                print("\n>>>Playing Library <<<")
+                tracks = musicLibrary.getAllTracks()
+                if not tracks:
+                    print("No tracks available in the Library.")
+                else:
+                    for track in tracks:
+                        print(f"Now playing {track}")
+                        queue.addTrack(track)
+                        queue.play
+                        input("Press Enter to continue to the next track.")
 
             case "2":
                 # The Diplay this if the input is 2
