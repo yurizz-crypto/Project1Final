@@ -3,26 +3,27 @@ from TrackClass import Track
 import os
 
 class Playlist:
-    def __init__(self, playlist_name: str):
-        self.__playlist_name = playlist_name
+    def __init__(self, name):
+        self.__name = name
         self.__tracks = []
         self.__total_duration = "00:00"
-    
-    def getPlaylistName(self):
-        return self.__playlist_name
-    
+
+    def getName(self):
+        return self.__name
+
     def getTotalDuration(self):
         return self.__total_duration
-    
+
     def getTracks(self):
         return self.__tracks
-    
-    def countSameTitle(self, track: Track):
+
+    def countSameTitles(self, track: Track):
         count = 0
         for i in self.__tracks:
             if i.getTitle() == track.getTitle():
                 count += 1
-            return count > 1
+        return count > 1
+
     
     def addTrack(self, track):
         if track not in self.__tracks:
@@ -102,48 +103,35 @@ class Playlist:
 
         return None
 
-        @staticmethod
-        def displayPlaylists(playlists: list, page: int = 1, items_per_page: int = 10):
-            total_pages = (len(playlists) + items_per_pages - 1)//items_per_page
-            if page < 1 or page > total_pages:
-                return False
+    @staticmethod
+    def displayPlaylists(playlists: list, page: int = 1, items_per_page: int = 10):
+        total_pages = (len(playlists) + items_per_page - 1) // items_per_page
+        if page < 1 or page > total_pages:
+            return False
 
-            start_index = (page - 1) * items_per_page
-            end_index = start_index + items_per_page
-            page_playlists = playlists[start_index:end_index]
+        start_index = (page - 1) * items_per_page
+        end_index = start_index + items_per_page
+        page_playlists = playlists[start_index:end_index]
 
-            display = "List of Playlists:\n\n"
-            current_index = start_index + 1
-            for playlist in page_playlists:
-                display += f"{current_index}{playlist}\n"
-                current_index += 1
+        display = "List of Playlists:\n\n"
+        current_index = start_index + 1
+        for playlist in page_playlists:
+            display += f"[{current_index}] {playlist}\n"
+            current_index += 1
 
-            display += f"\n<Page{page of {total_pages}>\n"
+        display += f"\n<Page {page} of {total_pages}>\n"
 
-            if page > 1:
-                display += f"[11] Previous Page\n"
-            if page < total_pages:
-                display += f"[12] Next Page\n"
+        if page > 1:
+            display += f"[11] Previous Page\n"
+        if page < total_pages:
+            display += f"[12] Next Page\n"
 
-            return display
-
+        return display
 
             
         def getPlaylistName(self):
             return self.__playlist_name
         
-        def getTotalDuration(self):
-            minutes = self.__total_duration // 60
-            seconds = self.__total_duration % 60
-            return f"{minutes} min {seconds} sec"
-        
-        def addTrack(self):
-            pass
-
-        def removeTrack(self):
-            pass
-
-        def updateTotalDuration(self):
             pass
 
         def __str__(self) -> str:
