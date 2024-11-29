@@ -22,6 +22,9 @@ MENUS = {
         3 : "Search for a Track",
         4 : "Delete a Track",
         5 : "Return to Main Menu",
+        6 : "Delete a Track",
+        7 : "Add Track to a Playlist"
+        0 : "Exit:
     },
     "playlists": {
         1 : "Create a New Playlist",
