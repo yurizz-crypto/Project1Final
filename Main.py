@@ -152,6 +152,48 @@ def main():
                             new_playlist = Playlist(playlist_name)
                             new_playlist.saveToJson()
                             print(f"Playlist '{playlist_name}' created successfully.")
+
+            case "2":
+                while True:
+                    print("\n<--------Playlists-------->")
+                    showMenu("playlists")
+                    opt = input("\nEnter choice: ")
+
+                    if opt == "1":
+                        pass
+
+                    elif opt == "2":
+                        playlist_name = input("Enter new playlist name('q' to cancel): ")
+                        if should_quit(playlist_name):
+                            continue'
+
+                        if playlist_name in Playlist.getPlaylist():
+                            print(f"Playlist '{playlist_name}' already exists.")
+                        else:
+                            new_playlist = Playlist(spaceCleaner(playlist_name))
+                            new_playlist.saveToJson()
+                            print(f"Playlist '{playlist_name}' created successfully.")
+
+                    elif opt =="3":
+                        playlist_names = Playlist.getPlaylists()
+                        if not playlist_names:
+                            print("No playlists available.:)
+
+                        else:
+                            current_page = 1
+                            while True:
+                                print(Playlist.displayPlaylists(playlist_names, current_page))
+                                user_input = input("Enter option ('0' to Exit): ")
+                                if user_input == "0":
+                                    break
+                                elif user_input == "11":
+                                    if current_page > 1:
+                                        current_page -= 1
+                                elif user_input == "12":
+                                    if current_page < (len(playlist_names) + 6) // 7:
+                                        curent_page += 1
+                                else:
+                                    print("Invalid input. Please try again.")
             
             case "3":
                 while True:
