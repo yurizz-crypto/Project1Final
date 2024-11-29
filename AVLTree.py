@@ -123,7 +123,7 @@ class AVLTree:
 
         return self.autoRotate(node)
 
-    def addTrack(self):
+    def addTrack(self, track: Track):
         check = self.searchTrack(track.getTitle(), track.getArtist())
         
         if check == None:
