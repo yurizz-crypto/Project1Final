@@ -32,72 +32,151 @@ class AVLNode:
 
 class AVLTree:
     def __init__(self):
-        self.__root = None
+        self.__root = None 
         
     def getRoot(self):
         return self.__root
     
     def getHeight(self, node: AVLNode):
+        
+        """
+        Returns the height of a given node.
+        
+        Parameters:
+            node (AVLNode): The node whose height is to be retrieved.
+        
+        Returns:
+            int: Height of the node, or 0 if the node is None.
+        """
+        
         return node.getHeight() if node else 0
     
     def updateHeight(self, node: AVLNode):
-        leftHeight = self.getHeight(node.getLeft())
-        rightHeight = self.getHeight(node.getRight())
         
-        if leftHeight > rightHeight:
-            node.setHeight(leftHeight + 1)
+        """
+        Updates the height of a node based on its children's heights.
+        
+        Parameters:
+            node (AVLNode): The node whose height needs updating.
+        """
+        
+        left_height = self.getHeight(node.getLeft())
+        right_reight = self.getHeight(node.getRight())
+        
+        if left_height > right_reight:
+            node.setHeight(left_height + 1)
         else:
-            node.setHeight(rightHeight + 1)
+            node.setHeight(right_reight + 1)
                    
     def getBalanceFactor(self, node: AVLNode):
+        
+        """
+        Parameters:
+            node (AVLNode): The node whose balance factor is calculated.
+        
+        Returns:
+            int: The difference between left and right subtree heights.
+        """
+        
         if node:
             return self.get_height(node.getLeft()) - self.get_height(node.getRight())
         return 0
 
     def rotateRight(self, root: AVLNode):
-        rootLeft = root.getLeft()
-        rootLeftRight = rootLeft.getRight()
         
-        rootLeft.setRight(rootLeft)
-        root.setLeft(rootLeftRight)
+        """
+        Performs a right rotation on the given root node.
         
+        Parameters:
+            root (AVLNode): The root node to rotate.
+        
+        Returns:
+            AVLNode: The new root after rotation.
+        """
+        
+        root_left = root.getLeft()
+        root_left_right = root_left.getRight()
+        
+        # Adjust pointers for rotation.
+        root_left.setRight(root_left)
+        root.setLeft(root_left_right)
+        
+        # Update heights after rotation.
         self.updateHeight(root)
-        self.updateHeight(rootLeft)
         
-        return rootLeft
+        self.updateHeight(root_left)
+        
+        return root_left
 
     def rotateLeft(self, root: AVLNode):
-        rootRight = root.getRight()
-        rootRightLeft = rootRight.getLeft()
         
-        rootRight.setLeft(root)
-        root.setRight(rootRightLeft)
+        """
+        Performs a left rotation on the given root node.
         
+        Parameters:
+            root (AVLNode): The root node to rotate.
+        
+        Returns:
+            AVLNode: The new root after rotation.
+        """
+        
+        root_right = root.getRight()
+        root_right_left = root_right.getLeft()
+        
+        # Adjust pointers for rotation.
+        root_right.setLeft(root)
+        root.setRight(root_right_left)
+        
+        # Update heights after rotation.
         self.updateHeight(root)
-        self.updateHeight(rootRight)
+        self.updateHeight(root_right)
     
     def autoRotate(self, node: AVLNode):
+        
+        """
+        Automatically rebalances the tree at a given node.
+        
+        Parameters:
+            node (AVLNode): The node to rebalance.
+        
+        Returns:
+            AVLNode: The new root of the subtree after rebalancing.
+        """
+
         balance = self.get_balance_factor(node)
         
-        if balance > 1: 
-            if self.getBalanceFactor(node.getLeft()) >= 0:
+        # Perform rotations based on balance factor.
+        if balance > 1: # Left-heavy
+            if self.getBalanceFactor(node.getLeft()) >= 0: # Left-Left case
                 return self.rotateRight(node)
         
-            else:
+            else: # Left-Right case
                 node.setLeft(self.rotateLeft(node.getLeft()))
                 return self.rotateRight(node)
         
-        if balance < -1:
-            if self.get_balance_factor(node.getRight()) <= 0:
+        if balance < -1: # Right-heavy
+            if self.get_balance_factor(node.getRight()) <= 0: # Right-Right case
                 return self.rotateLeft(node)
             
-            else:
+            else: # Right-Left case
                 node.setRight(self.rotateRight(node.getRight()))
                 return self.rotateLeft(node)
             
-        return node
+        return node 
 
     def compareTracks(self, track1: Track, track2: Track):
+        
+        """
+        Compares two tracks for ordering in the AVL Tree.
+
+        Parameters:
+            track1 (Track): The first track to compare.
+            track2 (Track): The second track to compare.
+
+        Returns:
+            bool: True if track1 is less than track2, False otherwise.
+        """
+        
         if track1.getTitle() != track2.getTitle():
             return track1.getTitle() < track2.getTitle()
         
@@ -123,6 +202,17 @@ class AVLTree:
         return self.autoRotate(node)
 
     def addTrack(self, track: Track):
+        
+        """
+        Adds a track to the AVL Tree if it doesn't already exist.
+        
+        Parameters:
+            track (Track): The track to add.
+        
+        Returns:
+            bool: True if the track was added, False otherwise.
+        """
+        
         check = self.searchTrack(track.getTitle(), track.getArtist())
         
         if check == None:
@@ -153,6 +243,9 @@ class AVLTree:
         return self.autoRotate(node)
     
     def getMinNode(self, node: AVLNode):
+        
+        # Finds the node with the minimum value in the subtree.
+        
         current = node
         while current.getLeft() is not None:
             current = current.getLeft()
@@ -197,6 +290,14 @@ class AVLTree:
                 result[i], result[j] = result[j], result[i]
         
     def getTotalDuration(self):
+        
+        """
+        Calculates the total duration of all tracks in the tree.
+        
+        Returns:
+            str: The total duration in "MM:SS" format.
+        """
+        
         def sum_durations(node: AVLNode):
             if not node:
                 return 0
@@ -210,11 +311,31 @@ class AVLTree:
         return f"{minutes:02}:{seconds:02}"
 
     def getSortedTracks(self) -> list:
+        
+        """
+        Retrieves all tracks in sorted order.
+        
+        Returns:
+            list: A list of tracks sorted by title, artist, album, and duration.
+        """
+        
         result = []
         self.traverse(self.__root, result, "inorder")
         return result      
 
     def searchTrack(self, title: str, artist: str | None = None) -> Track:
+        
+        """
+        Searches for a specific track in the tree.
+        
+        Parameters:
+            title (str): The title of the track to search for.
+            artist (str | None): The artist of the track (optional).
+        
+        Returns:
+            Track: The found track, or None if not found.
+        """
+        
         current = self._root
         while current:
             track = current.getTrack()
