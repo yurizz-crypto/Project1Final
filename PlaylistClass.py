@@ -23,24 +23,22 @@ class Playlist:
             if i.getTitle() == track.getTitle():
                 count += 1
         return count > 1
-
     
     def addTrack(self, track):
         if track not in self.__tracks:
             self.__tracks += [track]
-            self.update_total_duration()
-            self.save_to_json()
+            self.updateTotalDuration()
             return track
         return False
     
-    def removeTrack(self, title: str, artist: str):
+    def removeTrack(self, title: str):
         def divideAndConquer(tracks):
             if not tracks:
                 return [], None
             
             if len(tracks) == 1:
                 track = tracks[0]
-                if track.getTitle() == title and track.getArtist() == artist:
+                if track.getTitle() == title 
                     return [], track
                 else:
                     return [track], None
@@ -61,7 +59,7 @@ class Playlist:
         return removed_track
     
     def deletePlaylist(self):
-        filename = f"Fata/Playlists/{self.getName()}.json"
+        filename = f"Data/Playlists/{self.getName()}.json"
         if os.path.exists(filename):
             os.remove(filename)
             return True
@@ -77,7 +75,7 @@ class Playlist:
         filename = f"Data/Playlists/{self.getName()}.json"
         with open(filename, 'w') as file:
             json.dump({
-                "name":self.__name,
+                "name": self.__name,
                 "total_duration":self.__total_duration,
                 "track":[track.toDict() for track in self.getTracks()]
                 }, file, indent=2)
