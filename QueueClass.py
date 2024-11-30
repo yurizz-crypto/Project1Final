@@ -74,6 +74,17 @@ class MusicQueue:
     def setPlay(self, newPlay):
         self.__playing = newPlay
 
+    def clearQueue(self):
+        """Clear the current queue and reset the state."""
+        self.__head = None
+        self.__tail = None
+        self.__currentTrackNode = None
+        self.previousTracks = PreviousTrackStack()
+        self.__playing = False
+        self.__totalDuration = 0
+        self.saveQueueToJson()
+        print("Queue has been cleared.")
+
 
     def convertToSeconds(self, timeStr):
         """Convert a time string (MM:SS) to total seconds without any built-in functions."""
