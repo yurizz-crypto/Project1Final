@@ -2,7 +2,7 @@ import json
 from TrackClass import Track
 
 class Node:
-    def __init__(self,track = None):
+    def __init__(self, track=None):
         self.track = track
         self.next = None
         self.prev = None
@@ -16,6 +16,7 @@ class PreviousTrackStack:
         """Push a track onto the stack."""
         if track not in self.stack:
             self.stack += [track]
+            self.saveToJson()
 
     def pop(self):
         """Pop a track from the stack."""
@@ -59,20 +60,23 @@ class PreviousTrackStack:
             print(f"Error loading previous tracks from {self.filename}. Initializing as empty.")
             self.stack = []
 
+            
 class MusicQueue:
     def __init__(self):
-        self.__head = None  # The first track in the queue (linked list)
-        self.tail = None  # The last track in the queue (linked list)
-        self.__currentTrackNode = None  # Pointer to the currently playing track
+        self.__head = None
+        self.__tail = None
+        self.__currentTrackNode = None
+        self.__originalOrder = []
         self.__shuffle = False
-        self.__repeat = True
-        self.__playing = False  # Whether the track is currently playing
-        self.__totalDuration = 0  # Total duration of all tracks in the queue
+        self.__repeat = False
+        self.__playing = False
+        self.__totalDuration = 0
         self.previousTracks = PreviousTrackStack()
-        
-    # Accessor methods
+
     def getQueue(self):
         return self.__head
+    def getTail(self):
+        return self.__tail
     def getCurrentTrackNode(self):
         return self.__currentTrackNode
     def getShuffled(self):
@@ -84,11 +88,11 @@ class MusicQueue:
     def getTotalDuration(self):
         return self.__totalDuration
     
-    
-    # Mutator methods
     def setQueue(self, newQueue):
-        self.head = newQueue
-        self.tail = self.Tail(newQueue)
+        self.__head = newQueue
+        self.__tail = self.__tail(newQueue)
+    def setTail(self, newTail):
+        self.__tail = newTail
     def setCurrentTrackNode(self, newTrackNode):
         self.__currentTrackNode = newTrackNode
     def setShuffled(self, newShuffle):
@@ -112,23 +116,59 @@ class MusicQueue:
                 self.__totalDuration += track.getDurationInSeconds()
 
             print("Queue restored to the original order.")
+
+                
     def setRepeat(self, newRepeat):
         self.__repeat = newRepeat
     def setPlay(self, newPlay):
         self.__playing = newPlay
-
+        
     def clearQueue(self):
         """Clear the current queue and reset the state."""
         self.__head = None
         self.__tail = None
         self.__currentTrackNode = None
-        self.previousTracks = PreviousTrackStack()
+        self.previousTracks = PreviousTrackStack()  # Correct initialization
         self.__playing = False
         self.__totalDuration = 0
         self.saveQueueToJson()
         print("Queue has been cleared.")
+          
+    def _iterateQueue(self):
+        """Helper to iterate over the queue nodes."""
+        current = self.__head
+        while current:
+            yield current
+            current = current.next
+            
+    def addTrack(self, track: Track):
+        """Add a track to the queue and update the original order if shuffle is off."""
+        new_node = Node(track)
+        if not self.__head:
+            self.__head = new_node
+            self.__tail = new_node
+        else:
+            self.__tail.next = new_node
+            new_node.prev = self.__tail
+            self.__tail = new_node
+        self.__totalDuration += track.getDurationInSeconds()
 
+        # Update __originalOrder only if shuffle is off
+        if not self.__shuffle:
+            # Manually add the track to __originalOrder
+            temp = [None] * (len(self.__originalOrder) + 1)
+            for i in range(len(self.__originalOrder)):
+                temp[i] = self.__originalOrder[i]
+            temp[len(self.__originalOrder)] = track
+            self.__originalOrder = temp
 
+        self.saveQueueToJson()
+
+    
+    def addPlaylist(self, playlist: list):
+        for track in playlist:
+            self.addTrack(track)
+            
     def convertToSeconds(self, timeStr):
         """Convert a time string (MM:SS) to total seconds without any built-in functions."""
         colon_index = 0
@@ -173,137 +213,43 @@ class MusicQueue:
         else:
             return f"{minutes} min {seconds} sec"
     
-    def _iterateQueue(self):
-        """Helper to iterate over the queue nodes."""
-        current = self.__head
-        while current:
-            yield current
-            current = current.next
-    # Add a track to the queue
-    def addTrack(self, track: Track):
-        """Add a track to the queue."""
-        new_node = Node(track)
-        if not self.__head:
-            self.__head = new_node
-            self.__tail = new_node
-        else:
-            self.__tail.next = new_node
-            new_node.prev = self.__tail
-            self.__tail = new_node
-        self.__totalDuration += track.getDurationInSeconds()
-        self.saveQueueToJson()
-
-        
-    def addPlaylist(self, playlist):
-        for track in playlist:
-            self.addTrack(track)
-
-    def play(self):
-        """Start playing the queue."""
-        if not self.__head:
-            print("No tracks in the queue.")
-            return
-        if not self.__currentTrackNode:
-            self.__currentTrackNode = self.__head
-        self.__playing = True
-        print(f"Now Playing: {self.__currentTrackNode.track.getTitle()}")
-
-    # Pause Currently Playing track
-    def pause(self):
-        if self.__playing:
-            self.__playing = False
-            print(f"Paused: {self.__currentTrackNode.track}")
-
-    
-    # Get the tail (last track)
-    def Tail(self, head:Node):
-        """Find the tail node of the linked list."""
+    def tail(self, head: Node):
+        """Find the __tail node of the linked list."""
         if not head:
             return None
         current = head
         while current.next:
             current = current.next
         return current
-
-    # Shuffle the queue (optional)
-    def shuffleQueue(self):
-        """Shuffle the queue without losing the current track and correctly update the total duration."""
-        if not self.__head or not self.__head.next:
-            print("Queue is too small to shuffle.")
-            return
-
-        # Collect all nodes into a list
-        nodes = []
-        current = self.__head
-        while current:
-            nodes.append(current)
-            current = current.next
-
-        # Shuffle the list of nodes
-        n = len(nodes)
-        for i in range(n - 1, 0, -1):
-            j = self.randomIndex(0, i)
-            nodes[i], nodes[j] = nodes[j], nodes[i]
-
-        self.__head = nodes[0]
-        self.__tail = nodes[-1]
-
-        for i in range(len(nodes)):
-            nodes[i].next = nodes[i + 1] if i + 1 < len(nodes) else None
-            nodes[i].prev = nodes[i - 1] if i - 1 >= 0 else None
-
-        self.__totalDuration = 0
-        current = self.__head
-        while current:
-            self.__totalDuration += current.track.getDurationInSeconds()
-            current = current.next
-
-        print("Queue shuffled successfully!")
-
-
-    def randomIndex(self, start, end):
-        """Generate a random index between start and end (inclusive)."""
-        if not hasattr(self, "randomSeed"):
-            self.randomSeed = 123456789
-
-        modulus = 233280
-        multiplier = 9301
-        increment = 49297
-
-        self.randomSeed = (self.randomSeed * multiplier + increment) % modulus
-
-        return start + (self.randomSeed % (end - start + 1))
-
-
-
-    def addTrackWithoutDuration(self, track: Track):
-        """Add a track to the queue without updating the total duration."""
-        if not track:
-            print("Invalid track. Skipping addition.")
-            return
-
-        new_node = Node(track)
+    
+    def play(self):
+        """Start or resume playing the queue."""
         if not self.__head:
-            self.__head = new_node
-            self.__tail = new_node
-        else:
-            self.__tail.next = new_node
-            new_node.prev = self.__tail
-            self.__tail = new_node
+            print("No tracks in the queue.")
+            return
 
-        # Update __originalOrder manually
-        temp = [None] * (len(self.__originalOrder) + 1)
-        for i in range(len(self.__originalOrder)):
-            temp[i] = self.__originalOrder[i]
-        temp[len(self.__originalOrder)] = track
-        self.__originalOrder = temp
-    # Play the next track
+        # If no current track, set to the first track
+        if not self.__currentTrackNode:
+            self.__currentTrackNode = self.__head
+
+        self.__playing = True
+        print(f"Now Playing: {self.__currentTrackNode.track.getTitle()}")
+
+
+
+    def pause(self):
+        if self.__playing:
+            self.__playing = False
+            print(f"Paused: {self.__currentTrackNode.track}")
+            
+
     def nextTrack(self):
         """Move to the next track in the queue and remove the finished track if repeat is OFF."""
         if not self.__currentTrackNode:
             print("No tracks in the queue.")
             return
 
+        # If repeat is OFF, save the current track to the previous stack and remove it from the queue
         if not self.__repeat:
             # Save the current track to the previous stack
             self.previousTracks.push(self.__currentTrackNode.track)
@@ -323,9 +269,9 @@ class MusicQueue:
                 next_node.prev = prev_node
 
             if current_track == self.__head:
-                self.__head = next_node
+                self.__head = next_node  # Update head if removing the first track
             if current_track == self.__tail:
-                self.__tail = prev_node 
+                self.__tail = prev_node  # Update tail if removing the last track
 
             # Move to the next track or stop playback if no tracks left
             self.__currentTrackNode = next_node
@@ -340,12 +286,12 @@ class MusicQueue:
                 self.__currentTrackNode = self.__currentTrackNode.next
                 print(f"Repeat is enabled. Now playing: {self.__currentTrackNode.track.getTitle()}")
             else:
-                self.__currentTrackNode = self.__head
+                self.__currentTrackNode = self.__head  # Loop back to the first track
                 print(f"Repeat is enabled. Returning to the first track: {self.__currentTrackNode.track.getTitle()}")
 
         # Save the updated queue state
         self.saveQueueToJson()
-        
+
     def previousTrack(self):
         """Move to the previous track in the queue, considering repeat behavior."""
         if self.__repeat:
@@ -394,13 +340,14 @@ class MusicQueue:
         # Save the queue state
         self.previousTracks.saveToJson()
         self.saveQueueToJson()
-            
+
+
+
     def getQueueInfo(self):
         totalDurationStr = self.formatDuration(self.__totalDuration)
         print(f"\nTotal Duration: {totalDurationStr}")
         print(f"Shuffled: {'Yes' if self.__shuffle else 'No'}")
         print(f"Repeat: {'Yes' if self.__repeat else 'No'}\n")
-    
 
     def displayQueue(self, page=1, pageSize=10):
         """Display the queue with a formatted layout."""
@@ -436,7 +383,7 @@ class MusicQueue:
 
         total_pages = self.getTotalPages(pageSize)
         print(f"<Page {page} of {total_pages}>")
-        
+
     def getTotalPages(self, pageSize=10):
         length = 0
         current = self.__head
@@ -444,9 +391,10 @@ class MusicQueue:
             length += 1
             current = current.next
         return (length + pageSize - 1) // pageSize
-    
+
     def saveQueueToJson(self):
         """Save the queue state to a JSON file."""
+        # Save the original order and queue state
         queue_list = [node.track.toDict() for node in self._iterateQueue()]
 
         state = {
@@ -456,12 +404,9 @@ class MusicQueue:
             "repeat": self.__repeat,
         }
 
-        try:
-            with open("Data/queue.json", "w") as file:
-                json.dump(state, file, indent=4)
-        except Exception as e:
-            print(f"Error saving queue: {e}")
-            
+        with open("Data/queue.json", "w") as file:
+            json.dump(state, file, indent=4)
+    
     def getIndexOfNode(self, node: Node):
         """Return the index of a given node in the queue."""
         current = self.__head
@@ -473,6 +418,76 @@ class MusicQueue:
             index += 1
         return -1
     
+    def shuffleQueue(self):
+        """Shuffle the queue without losing the current track and correctly update the total duration."""
+        if not self.__head or not self.__head.next:
+            print("Queue is too small to shuffle.")
+            return
+
+        # Collect all nodes into a list
+        nodes = []
+        current = self.__head
+        while current:
+            nodes.append(current)
+            current = current.next
+
+        # Shuffle the list of nodes
+        n = len(nodes)
+        for i in range(n - 1, 0, -1):
+            j = self.randomIndex(0, i)
+            nodes[i], nodes[j] = nodes[j], nodes[i]
+
+        self.__head = nodes[0]
+        self.__tail = nodes[-1]
+
+        for i in range(len(nodes)):
+            nodes[i].next = nodes[i + 1] if i + 1 < len(nodes) else None
+            nodes[i].prev = nodes[i - 1] if i - 1 >= 0 else None
+
+        self.__totalDuration = 0
+        current = self.__head
+        while current:
+            self.__totalDuration += current.track.getDurationInSeconds()
+            current = current.next
+
+        print("Queue shuffled successfully!")
+
+
+    def randomIndex(self, start, end):
+        """Generate a random index between start and end (inclusive)."""
+        if not hasattr(self, "randomSeed"):
+            self.randomSeed = 123456789
+
+        modulus = 233280
+        multiplier = 9301
+        increment = 49297
+
+        self.randomSeed = (self.randomSeed * multiplier + increment) % modulus
+
+        return start + (self.randomSeed % (end - start + 1))
+
+    def addTrackWithoutDuration(self, track: Track):
+        """Add a track to the queue without updating the total duration."""
+        if not track:
+            print("Invalid track. Skipping addition.")
+            return
+
+        new_node = Node(track)
+        if not self.__head:
+            self.__head = new_node
+            self.__tail = new_node
+        else:
+            self.__tail.next = new_node
+            new_node.prev = self.__tail
+            self.__tail = new_node
+
+        # Update __originalOrder manually
+        temp = [None] * (len(self.__originalOrder) + 1)
+        for i in range(len(self.__originalOrder)):
+            temp[i] = self.__originalOrder[i]
+        temp[len(self.__originalOrder)] = track
+        self.__originalOrder = temp
+        
     def loadStateFromJSON(self):
         try:
             with open("Data/queue.json", "r") as file:
@@ -519,7 +534,8 @@ class MusicQueue:
 
         except FileNotFoundError:
             print("Queue file not found. Starting fresh.")
-    
+
+
     def queueInterface(self):
         self.loadStateFromJSON()
         if not isinstance(self.previousTracks, PreviousTrackStack):
@@ -563,6 +579,3 @@ class MusicQueue:
                 self.clearQueue()
             else:
                 print("Invalid choice. Try again.")
-
-
-MusicQueue().queueInterface()
