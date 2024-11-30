@@ -534,7 +534,17 @@ class MusicQueue:
 
         except FileNotFoundError:
             print("Queue file not found. Starting fresh.")
-
+    
+    def getNodeAtIndex(self, index):
+        """Return the node at a specific index."""
+        current = self.__head
+        current_index = 0
+        while current:
+            if current_index == index:
+                return current
+            current = current.next
+            current_index += 1
+        return None
 
     def queueInterface(self):
         self.loadStateFromJSON()

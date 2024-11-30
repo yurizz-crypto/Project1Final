@@ -189,6 +189,8 @@ class AVLTree:
         return track1.getDuration() < track2.getDuration()
 
     def insert(self, node: AVLNode, track: Track):
+        """Inserts a track, updates node heights, 
+        and balances the AVL tree."""
         if not node:
             return AVLNode(track)
 
@@ -220,7 +222,9 @@ class AVLTree:
 
         return False
     
-    def delete(self, node: AVLNode, track: Track):
+    def delete(self, node: AVLNode, track: Track): 
+        """Deletes a track from the AVL tree 
+            by locating the node containing the track """
         if not node:
             return node
 
@@ -252,6 +256,8 @@ class AVLTree:
         return current
     
     def removeTrack(self, track: Track):
+        """Removes a track from the AVL tree and 
+        updates all playlists by removing the track if it exists."""
         self.__root = self.delete(self.__root, track)
         
         playlists = Playlist.getPlaylists()
@@ -263,6 +269,8 @@ class AVLTree:
                     print(f"Removed '{track.getTitle()}' by {track.getArtist()} from playlist '{playlist_name}'.")
 
     def getDuplicates(self, node: AVLNode, title) -> list:
+        """searches ang AVL tree for tracks with 
+        the given title and returns a list of duplicates"""
         duplicates = []
         if node:
             duplicates += self.getDuplicates(node.getLeft(), title)
@@ -275,6 +283,8 @@ class AVLTree:
         return duplicates
     
     def traverse(self, node: AVLNode, result: list, order: str):
+        """Traverses the AVL tree in-order and appends tracks to 
+        the result list."""
         if not node:
             return
         
@@ -346,6 +356,8 @@ class AVLTree:
             json.dump([track.toDict() for track in tracks], file, indent=2)
 
     def loadFromJson(self, filename="Data/tracks.json"):
+        """Loads tracks from a JSON file and inserts them into the AVL tree.
+        handles missing file errors."""
         try:
             with open(filename, 'r') as file:
                 data = json.load(file)
