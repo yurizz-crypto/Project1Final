@@ -115,15 +115,14 @@ class MusicQueue:
             self.addTrack(track)
 
     def play(self):
+        """Start playing the queue."""
         if not self.__head:
             print("No tracks in the queue.")
             return
-        
         if not self.__currentTrackNode:
             self.__currentTrackNode = self.__head
-        
         self.__playing = True
-        print(f"Now Playing: {self.__currentTrackNode.track}")
+        print(f"Now Playing: {self.__currentTrackNode.track.getTitle()}")
 
     # Pause Currently Playing track
     def pause(self):
