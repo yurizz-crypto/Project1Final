@@ -152,7 +152,13 @@ class AVLTree:
         self.updateHeight(node)
 
         return self.autoRotate(node)
-
+    
+    def getMinNode(self, node: AVLNode):
+        current = node
+        while current.getLeft() is not None:
+            current = current.getLeft()
+        return current
+    
     def removeTrack(self, track: Track):
         self.__root = self.delete(self.__root, track)
         
