@@ -1,8 +1,8 @@
 class Track:
     def __init__(self, title: str, main_artist: str, album: str, duration: str, additional_artists: list | None = None):
-        self.__title = self.validateInput(title, "Title")
-        self.__artist = self.validateInput(main_artist, "Artist")
-        self.__album = self.validateInput(album, "Album")
+        self.__title = title
+        self.__artist = main_artist
+        self.__album = album
         self.__duration = duration
         self.__additional_artists = additional_artists or []
 
@@ -12,25 +12,22 @@ class Track:
     def getDuration(self): return self.__duration
     def getAdditionalArtists(self): return self.__additional_artists
 
-    def validateInput(self, value: str, field_name: str) -> str:
-        if not value:
-            raise ValueError(f"{field_name} cannot be empty.")
-        return value
-    
-    
-    def getDurationInSeconds(self):
+    def getDurationInSeconds(self) -> int:
         colon_index = -1
-        for i in range(len(self.__duration)):
-            if self.__duration[i] == ":":
-                colon_index = i
+        index = 0
+
+        for char in self.__duration:
+            if char == ':':
+                colon_index = index
                 break
-        
+            index += 1
+
         minutes = int(self.__duration[:colon_index])
         seconds = int(self.__duration[colon_index + 1:])
 
         return minutes * 60 + seconds
-    
-    def toDict(self):
+
+    def toDict(self) -> dict:
         return {
             "title": self.__title,
             "artist": self.__artist,
@@ -38,7 +35,7 @@ class Track:
             "album": self.__album,
             "duration": self.__duration
         }
-    
+
     @staticmethod
     def fromDict(data: dict):
         return Track(
@@ -64,4 +61,4 @@ class Track:
             return f"{self.getTitle()} - {self.getArtist()} ({self.getDuration()})"
         else:
             return (f"\nTitle: {self.getTitle()}\nArtist: {self.getArtist()}\nAlbum: {self.getAlbum()}\n"
-                    f"Duration: {self.getDuration()}\nAdditional Artists: {additional_artists}")
+                    f"Duration: {self.getDuration()}\nAdditional Artists: {additional_artists}\n")

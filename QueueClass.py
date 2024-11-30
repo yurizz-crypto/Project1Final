@@ -9,6 +9,30 @@ class Node:
         self.next = None
         self.prev = None
 
+class PreviousTrackStack:
+    def __init__(self, filename="Data/previous_tracks.json"):
+        self.stack = []
+        self.filename = filename
+
+    def push(self, track: Track):
+        """Push a track onto the stack."""
+        if track not in self.stack:
+            self.stack += [track]
+
+    def pop(self):
+        """Pop a track from the stack."""
+        if not self.stack:
+            return None
+        
+        track = self.stack[-1]
+        self.stack = self.stack[:-1]
+
+        return track
+
+    def peek(self):
+        """Peek at the top of the stack without removing it."""
+        return self.stack[-1] if self.stack else None
+
 class MusicQueue:
     def __init__(self):
         self.__head = None  # The first track in the queue (linked list)
