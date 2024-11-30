@@ -1,7 +1,5 @@
 import json
 from TrackClass import Track
-from PlaylistClass import Playlist
-import AVLTree
 
 class Node:
     def __init__(self,track = None):
@@ -33,6 +31,34 @@ class PreviousTrackStack:
         """Peek at the top of the stack without removing it."""
         return self.stack[-1] if self.stack else None
 
+    def saveToJson(self):
+        """Save the stack to a JSON file."""
+        try:
+            with open(self.filename, "w") as file:
+                json.dump([track.toDict() for track in self.stack], file, indent=4)
+        except Exception as e:
+            print(f"Error saving previous tracks: {e}")
+
+    def loadFromJson(self):
+        """Load the stack from a JSON file."""
+        try:
+            with open(self.filename, "r") as file:
+                file_data = ""
+                char = file.read(1)
+                while char:
+                    file_data += char
+                    char = file.read(1)
+                
+                if not file_data.strip():  # Check for empty file
+                    self.stack = []
+                    return
+
+                track_data = json.loads(file_data)  # Parse JSON manually
+                self.stack = [Track.fromDict(data) for data in track_data]
+        except (FileNotFoundError, json.JSONDecodeError):
+            print(f"Error loading previous tracks from {self.filename}. Initializing as empty.")
+            self.stack = []
+
 class MusicQueue:
     def __init__(self):
         self.__head = None  # The first track in the queue (linked list)
@@ -42,8 +68,8 @@ class MusicQueue:
         self.__repeat = True
         self.__playing = False  # Whether the track is currently playing
         self.__totalDuration = 0  # Total duration of all tracks in the queue
-        self.avlTree = AVLTree.AVLTree()
-
+        self.previousTracks = PreviousTrackStack()
+        
     # Accessor methods
     def getQueue(self):
         return self.__head
@@ -57,7 +83,7 @@ class MusicQueue:
         return self.__playing
     def getTotalDuration(self):
         return self.__totalDuration
-
+    
     
     # Mutator methods
     def setQueue(self, newQueue):
@@ -66,9 +92,26 @@ class MusicQueue:
     def setCurrentTrackNode(self, newTrackNode):
         self.__currentTrackNode = newTrackNode
     def setShuffled(self, newShuffle):
+        """Enable or disable shuffle and update the queue accordingly."""
+        if self.__shuffle == newShuffle:
+            return  # No change if shuffle state is the same
+
         self.__shuffle = newShuffle
+
         if self.__shuffle:
+            # Shuffle the queue
             self.shuffleQueue()
+        else:
+            # Restore the original order
+            self.__head = None
+            self.__tail = None
+            self.__totalDuration = 0
+
+            for track in self.__originalOrder:
+                self.addTrackWithoutDuration(track)  # Rebuild the queue
+                self.__totalDuration += track.getDurationInSeconds()
+
+            print("Queue restored to the original order.")
     def setRepeat(self, newRepeat):
         self.__repeat = newRepeat
     def setPlay(self, newPlay):
@@ -184,43 +227,76 @@ class MusicQueue:
 
     # Shuffle the queue (optional)
     def shuffleQueue(self):
-        if self.__head is None:
-            return  # No tracks to shuffle
+        """Shuffle the queue without losing the current track and correctly update the total duration."""
+        if not self.__head or not self.__head.next:
+            print("Queue is too small to shuffle.")
+            return
 
-        # Convert linked list to array
-        tracks = []
+        # Collect all nodes into a list
+        nodes = []
         current = self.__head
-        while current is not None:
-            tracks.append(current.track)
+        while current:
+            nodes.append(current)
             current = current.next
 
-        # Shuffle the array using a simple algorithm (Fisher-Yates)
-        n = len(tracks)
+        # Shuffle the list of nodes
+        n = len(nodes)
         for i in range(n - 1, 0, -1):
-            j = self.getRandomIndex(i + 1)  # Get a random index from 0 to i
-            tracks[i], tracks[j] = tracks[j], tracks[i]  # Swap
+            j = self.randomIndex(0, i)
+            nodes[i], nodes[j] = nodes[j], nodes[i]
 
-        # Rebuild the linked list from the shuffled array
-        self.__head = None
-        self.tail = None
-        for track in tracks:
-            self.addTrack(track)
+        self.__head = nodes[0]
+        self.__tail = nodes[-1]
+
+        for i in range(len(nodes)):
+            nodes[i].next = nodes[i + 1] if i + 1 < len(nodes) else None
+            nodes[i].prev = nodes[i - 1] if i - 1 >= 0 else None
+
+        self.__totalDuration = 0
+        current = self.__head
+        while current:
+            self.__totalDuration += current.track.getDurationInSeconds()
+            current = current.next
+
+        print("Queue shuffled successfully!")
+
+
+    def randomIndex(self, start, end):
+        """Generate a random index between start and end (inclusive)."""
+        if not hasattr(self, "randomSeed"):
+            self.randomSeed = 123456789
+
+        modulus = 233280
+        multiplier = 9301
+        increment = 49297
+
+        self.randomSeed = (self.randomSeed * multiplier + increment) % modulus
+
+        return start + (self.randomSeed % (end - start + 1))
 
 
 
-    def getRandomIndex(self, max_value):
-        """ Get a random index from 0 to max_value also ensuring their are new sets of shuffled queues every now and then """
-        # Simple linear congruential generator (LCG) for demonstration
-        seed = 123456789  # Example seed
-        a = 1664525
-        c = 1013904223
-        m = 2**32
+    def addTrackWithoutDuration(self, track: Track):
+        """Add a track to the queue without updating the total duration."""
+        if not track:
+            print("Invalid track. Skipping addition.")
+            return
 
-        # Generate a pseudo-random number
-        seed = (a * seed + c) % m
-        return seed % max_value
- 
+        new_node = Node(track)
+        if not self.__head:
+            self.__head = new_node
+            self.__tail = new_node
+        else:
+            self.__tail.next = new_node
+            new_node.prev = self.__tail
+            self.__tail = new_node
 
+        # Update __originalOrder manually
+        temp = [None] * (len(self.__originalOrder) + 1)
+        for i in range(len(self.__originalOrder)):
+            temp[i] = self.__originalOrder[i]
+        temp[len(self.__originalOrder)] = track
+        self.__originalOrder = temp
     # Play the next track
     def nextTrack(self):
         """Move to the next track in the queue and remove the finished track if repeat is OFF."""
@@ -398,7 +474,51 @@ class MusicQueue:
         return -1
     
     def loadStateFromJSON(self):
-        pass
+        try:
+            with open("Data/queue.json", "r") as file:
+                state = json.load(file)
+
+            self.__shuffle = state.get("shuffle", False)
+            self.__repeat = state.get("repeat", False)
+            self.__playing = state.get("playing", False)
+
+            queue_data = state.get("queue", [])
+            current_index = state.get("currentTrackIndex", 0)
+
+            self.__head = None
+            self.__tail = None
+            self.__totalDuration = 0
+
+            previous_node = None
+            for track_data in queue_data:
+                track = Track(
+                    track_data["title"],
+                    track_data["artist"],
+                    track_data["album"],
+                    track_data["duration"]
+                )
+                new_node = Node(track)
+
+                if self.__head is None:
+                    self.__head = new_node
+                else:
+                    previous_node.next = new_node
+                    new_node.prev = previous_node
+
+                previous_node = new_node
+                self.__totalDuration += track.getDurationInSeconds()
+
+            self.__tail = previous_node
+
+            if 0 <= current_index < len(queue_data):
+                self.__currentTrackNode = self.__head
+                for _ in range(current_index):
+                    self.__currentTrackNode = self.__currentTrackNode.next
+            else:
+                self.__currentTrackNode = None
+
+        except FileNotFoundError:
+            print("Queue file not found. Starting fresh.")
     
     def queueInterface(self):
         self.loadStateFromJSON()
