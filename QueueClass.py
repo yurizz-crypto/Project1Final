@@ -235,5 +235,11 @@ class MusicQueue:
             print(f"Previous track: {self.__currentTrackNode.track}")
         else:
             print("No previous tracks. Staying on the current track.")
+            
+    def getQueueInfo(self):
+        totalDurationStr = self.formatDuration(self.__totalDuration)
+        print(f"\nTotal Duration: {totalDurationStr}")
+        print(f"Shuffled: {'Yes' if self.__shuffle else 'No'}")
+        print(f"Repeat: {'Yes' if self.__repeat else 'No'}\n")
     
 
