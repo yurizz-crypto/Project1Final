@@ -96,17 +96,18 @@ class MusicQueue:
             return f"{minutes} min {seconds} sec"
         
     # Add a track to the queue
-    def addTrack(self, track):
+    def addTrack(self, track: Track):
         """Add a track to the queue."""
         new_node = Node(track)
-        if self.__head is None:
+        if not self.__head:
             self.__head = new_node
-            self.tail = new_node
+            self.__tail = new_node
         else:
-            self.tail.next = new_node
-            self.tail = new_node
-            
-        self.__totalDuration += self.convertToSeconds(track.getDuration())
+            self.__tail.next = new_node
+            new_node.prev = self.__tail
+            self.__tail = new_node
+        self.__totalDuration += track.getDurationInSeconds()
+        self.saveQueueToJson()
 
         
     def addPlaylist(self, playlist):
@@ -229,15 +230,5 @@ class MusicQueue:
             print(f"Previous track: {self.__currentTrackNode.track}")
         else:
             print("No previous tracks. Staying on the current track.")
-    
-    def addTrackToQueue(self, track):
-        """Helper method to add a track to the queue."""
-        new_node = Node(track)
-        if self.__head is None:
-            self.__head = new_node
-            self.tail = new_node
-        else:
-            self.tail.next = new_node
-            self.tail = new_node
     
 
