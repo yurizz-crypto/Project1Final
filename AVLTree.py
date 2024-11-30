@@ -60,13 +60,13 @@ class AVLTree:
             node (AVLNode): The node whose height needs updating.
         """
         
-        left_height = self.getHeight(node.getLeft())
-        right_reight = self.getHeight(node.getRight())
+        leftHeight = self.getHeight(node.getLeft())
+        rightReight = self.getHeight(node.getRight())
         
-        if left_height > right_reight:
-            node.setHeight(left_height + 1)
+        if leftHeight >  rightReight:
+            node.setHeight(leftHeight + 1)
         else:
-            node.setHeight(right_reight + 1)
+            node.setHeight( rightReight + 1)
                    
     def getBalanceFactor(self, node: AVLNode):
         
@@ -79,7 +79,7 @@ class AVLTree:
         """
         
         if node:
-            return self.get_height(node.getLeft()) - self.get_height(node.getRight())
+            return self.getHeight(node.getLeft()) - self.getHeight(node.getRight())
         return 0
 
     def rotateRight(self, root: AVLNode):
@@ -94,19 +94,19 @@ class AVLTree:
             AVLNode: The new root after rotation.
         """
         
-        root_left = root.getLeft()
-        root_left_right = root_left.getRight()
+        rootLeft = root.getLeft()
+        rootLeftRight = rootLeft.getRight()
         
         # Adjust pointers for rotation.
-        root_left.setRight(root_left)
-        root.setLeft(root_left_right)
+        rootLeft.setRight(rootLeft)
+        root.setLeft(rootLeftRight)
         
         # Update heights after rotation.
         self.updateHeight(root)
         
-        self.updateHeight(root_left)
+        self.updateHeight(rootLeft)
         
-        return root_left
+        return rootLeft
 
     def rotateLeft(self, root: AVLNode):
         
@@ -120,16 +120,16 @@ class AVLTree:
             AVLNode: The new root after rotation.
         """
         
-        root_right = root.getRight()
-        root_right_left = root_right.getLeft()
+        rootRight = root.getRight()
+        rootRightLeft = rootRight.getLeft()
         
         # Adjust pointers for rotation.
-        root_right.setLeft(root)
-        root.setRight(root_right_left)
+        rootRight.setLeft(root)
+        root.setRight(rootRightLeft)
         
         # Update heights after rotation.
         self.updateHeight(root)
-        self.updateHeight(root_right)
+        self.updateHeight(rootRight)
     
     def autoRotate(self, node: AVLNode):
         
@@ -143,7 +143,7 @@ class AVLTree:
             AVLNode: The new root of the subtree after rebalancing.
         """
 
-        balance = self.get_balance_factor(node)
+        balance = self.getBalanceFactor(node)
         
         # Perform rotations based on balance factor.
         if balance > 1: # Left-heavy
@@ -155,7 +155,7 @@ class AVLTree:
                 return self.rotateRight(node)
         
         if balance < -1: # Right-heavy
-            if self.get_balance_factor(node.getRight()) <= 0: # Right-Right case
+            if self.getBalanceFactor(node.getRight()) <= 0: # Right-Right case
                 return self.rotateLeft(node)
             
             else: # Right-Left case
@@ -301,16 +301,16 @@ class AVLTree:
             str: The total duration in "MM:SS" format.
         """
         
-        def sum_durations(node: AVLNode):
+        def sumDurations(node: AVLNode):
             if not node:
                 return 0
-            left_duration = sum_durations(node.getLeft())
-            right_duration = sum_durations(node.getRight())
-            return node.getTrack().getDurationInSeconds() + left_duration + right_duration
+            leftDuration = sumDurations(node.getLeft())
+            rightDuration = sumDurations(node.getRight())
+            return node.getTrack().getDurationInSeconds() + leftDuration + rightDuration
         
-        total_Seconds = sum_durations(self.getRoot())
-        minutes = total_Seconds // 60
-        seconds = total_Seconds % 60
+        totalSeconds = sumDurations(self.getRoot())
+        minutes = totalSeconds // 60
+        seconds = totalSeconds % 60
         return f"{minutes:02}:{seconds:02}"
 
     def getSortedTracks(self) -> list:
