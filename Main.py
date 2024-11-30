@@ -353,6 +353,50 @@ def main():
                                 addTrackToPlaylist(musicLibrary, playlistName)
                                 Playlist(playlistName).saveToJson()
                                 break
+                    elif opt == "5": #Delete a Playlist
+                        playlistName = input("Enter playlist name to delete ('q' to cancel): ")
+                        if shouldQuit(playlistName):
+                            continue
+
+                        if playlistName in Playlist.getPlaylists():
+                            Playlist(playlistName).deletePlaylist()
+                            print(f"Playlist '{playlistName}' deleted successfully.")
+                        else:
+                            print(f"Playlist '{playlistName}' not found.")
+
+                    elif opt == "6": # Display a Playlist on the library
+                        playlistName = input("Enter playlist name to display ('q' to cancel): ")
+                        if shouldQuit(playlistName):
+                            continue
+
+                        if playlistName in Playlist.getPlaylists():
+                            print(Playlist.loadFromJson(playlistName))
+
+                        else:
+                            print(f"Playlist '{playlistName}' not found.")
+
+                    elif opt == "7": #Delete a Track on the Playlist
+                        while True:
+                            playlistName = input("Enter playlist name ('q' to cancel): ")
+                            if shouldQuit(playlistName):
+                                break
+
+                            if playlistName not in Playlist.getPlaylistName():
+                                print(f"Playlist '{playlistName}' not found. Please check the name and try again.")
+                                continue
+
+                            playlist = Playlist.loadFromJson(playlistName)
+                            if playlist:
+                                track_title = input("Enter title of the track: ")
+                                
+                                deleted = playlist.removeTrack(track_title)
+                                if deleted != None:
+                                    print("Track deleted...\n")
+                                    break
+
+                                else:
+                                    print("Track not found in {}.\n".format(playlistName))
+                            
             
             # Adding a new track to the music library
             case "3":
