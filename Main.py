@@ -147,23 +147,28 @@ def playPlaylist(playlistName: str, musicLibrary: AVLTree, queue: MusicQueue):
     queue.queueInterface()
 
 def main():
+    # Main loop
     while True:
         print("\n<==========Listen to Music==========>")
         showMenu("musicLibrary")
         opt = input("\nEnter choice: ")
 
         match opt:
+            # If user choose to exit the program
             case "0":
                 musicLibrary.saveToJson()
                 print("Exiting Program...")
                 break
 
             case "1":
+                # Clearing current queue and sorted tracks
                 queue.clearQueue()
 
+                # Adding sorted tracks to the queue
                 for track in musicLibrary.getSortedTracks():
                     queue.addTrack(track)
                 
+                # Start queue interface
                 queue.queueInterface()
 
             case "2":
@@ -199,36 +204,50 @@ def main():
                             new_playlist.saveToJson()
                             print(f"Playlist '{playlist_name}' created successfully.")
             
+            # Adding a new track to the music library
             case "3":
                 while True:
                     new_track = addTrack()
                     if new_track is None:
+                        # Exiting loop if user choose to cancel
                         break
                     elif new_track:
                         musicLibrary.addTrack(new_track)
+                        # Successful addition of track
                         print("Track added successfully!\n")
+                        # Adding another track
                         if input("Add another track? (y/n): ") == "n" or input("Add another track (y/n): ") == "N":
                             break
+                        # Saving changes to music library
                         musicLibrary.saveToJson()
+                    # If track is already in the library
                     else:
                         print("Track already exists.")
 
+            # Dsiplaying music library
             case "4":
                 print(musicLibrary)
             
+            # Method for searching a track in music library
             case "5":
                 print("\n>>> Search for a Track <<<")
                 title = input("Enter Track title ('q' to cancel): ")
                 if shouldQuit(title):
                     continue
-
+                
+                # Searching duplicate track
                 duplicates = musicLibrary.getDuplicates(musicLibrary.getRoot(), title)
                 found = musicLibrary.searchTrack(title)
 
+                # If there is duplication:
                 if len(duplicates) > 1:
                     showDuplicates(duplicates)
+
+                # If no duplication, show track
                 elif found: 
                     print(found)
+                
+                # If not found, notify
                 else:
                     print("Track not found.\n")
 
