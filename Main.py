@@ -139,6 +139,27 @@ def addTrack():
 
         return formatted_minutes + ":" + formatted_seconds
 
+
+def playPlaylist(playlistName: str, musicLibrary: AVLTree, queue: MusicQueue):
+    # Check if the playlist exists
+    playlist = Playlist.loadFromJson(playlistName)
+    if not playlist:
+        print(f"Playlist '{playlistName}' not found.")
+        return
+
+    # Clear the current queue
+    queue.clearQueue()
+
+    # Add tracks from the playlist to the queue
+    print(f"Loading playlist: {playlistName}")
+    for track in playlist.getTracks():
+        queue.addTrack(track)
+
+    #start playing current queue
+    queue.play()
+
+    queue.queueInterface()
+
 def main():
     while True:
         print("\n<==========Listen to Music==========>")
