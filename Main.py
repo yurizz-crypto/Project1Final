@@ -399,11 +399,8 @@ def main():
 
                 addTrackToPlaylist(musicLibrary, playlist_name)
                
-
             case _:
                 print("Invalid Option.")
 
     if __name__ == "__main__":
         main()
-
-                    
