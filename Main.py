@@ -125,6 +125,74 @@ def addTrack():
 
         return formatted_minutes + ":" + formatted_seconds
 
+    while True:
+        print("\n<---------Add Track--------->")
+        print("Instruction | 'q' to cancel adding a track")
+        title = input("Enter Title: ")
+        if shouldQuit(title):
+            print("Track addition canceled.\n")
+            return None
+        if not title or checkIfSpaceOnly(title):
+            print("Title cannot be empty. Please enter a valid title.")
+            continue
+
+        artist = input("Enter Artist: ")
+        if shouldQuit(artist):
+            print("Track addition canceled.\n")
+            return None
+        if not artist or checkIfSpaceOnly(artist):
+            print("Artist cannot be empty. Please enter a valid artist.")
+            continue
+
+        additionalArtists = []
+        while True:
+            collaborators = input("Add Additional Artist(s)? (y/n): ")
+            if shouldQuit(collaborators):
+                print("Track addition canceled.\n")
+                return None
+            elif collaborators == "y" or collaborators == "Y":
+                while True:
+                    additional = input("Enter other Artist(s) ('q' to stop): ")
+
+                    if shouldQuit(additional):
+                        break
+
+                    elif additional:
+                        additionalArtists += [spaceCleaner(additional)]
+
+                    elif not additional or checkIfSpaceOnly(additional):
+                        print("Artist name cannot be empty.")
+
+                break
+
+            elif collaborators == "n" or collaborators == "N":
+                break
+
+            else:
+                print("Invalid input. Please enter 'y' or 'n'.")
+
+        album = input("Enter Album Title: ")
+        if shouldQuit(album):
+            print("Track addition canceled.\n")
+            return None
+        
+        if not album or checkIfSpaceOnly(album):
+            print("Album cannot be empty. Please enter valid album.")
+
+        while True:
+            duration = input("Enter Duration (e.g., 1:42): ")
+            if shouldQuit(duration):
+                return None
+
+            formattedDuration = validateAndFormatDuration(duration)
+            if formattedDuration:
+                break
+
+            else:
+                print("Invalid duration. Please enter in 'mm:ss' format.")
+
+        track = Track(spaceCleaner(title), spaceCleaner(artist), spaceCleaner(album), formattedDuration, additionalArtists)
+        return (track if musicLibrary.searchTrack(track.getTitle(), track.getArtist()) == None else False)
 
 def playPlaylist(playlistName: str, musicLibrary: AVLTree, queue: MusicQueue):
     # Check if the playlist exists
