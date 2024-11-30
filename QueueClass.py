@@ -74,6 +74,17 @@ class MusicQueue:
     def setPlay(self, newPlay):
         self.__playing = newPlay
 
+    def clearQueue(self):
+        """Clear the current queue and reset the state."""
+        self.__head = None
+        self.__tail = None
+        self.__currentTrackNode = None
+        self.previousTracks = PreviousTrackStack()
+        self.__playing = False
+        self.__totalDuration = 0
+        self.saveQueueToJson()
+        print("Queue has been cleared.")
+
 
     def convertToSeconds(self, timeStr):
         """Convert a time string (MM:SS) to total seconds without any built-in functions."""
@@ -212,59 +223,101 @@ class MusicQueue:
 
     # Play the next track
     def nextTrack(self):
+        """Move to the next track in the queue and remove the finished track if repeat is OFF."""
         if not self.__currentTrackNode:
             print("No tracks in the queue.")
             return
 
-        self.previousTracks.push(self.__currentTrackNode.track)
-        self.__totalDuration -= self.__currentTrackNode.track.getDurationInSeconds()
+        if not self.__repeat:
+            # Save the current track to the previous stack
+            self.previousTracks.push(self.__currentTrackNode.track)
 
-        if self.__repeat:
-            if not self.__currentTrackNode.next:
-                self.__currentTrackNode = self.__head
-            else:
-                self.__currentTrackNode = self.__currentTrackNode.next
-            print(f"Repeat is enabled. Playing next track: {self.__currentTrackNode.track}")
-            return
+            # Handle track removal
+            current_track = self.__currentTrackNode
+            next_node = current_track.next
+            prev_node = current_track.prev
 
-        next_node = self.__currentTrackNode.next
-        if self.__currentTrackNode == self.__head:
-            self.__head = next_node
-            if self.__head:
-                self.__head.prev = None
-        else:
-            if self.__currentTrackNode.prev:
-                self.__currentTrackNode.prev.next = next_node
+            # Subtract the duration of the current track from the total duration
+            self.__totalDuration -= current_track.track.getDurationInSeconds()
+
+            # Remove the current track from the queue
+            if prev_node:
+                prev_node.next = next_node
             if next_node:
-                next_node.prev = self.__currentTrackNode.prev
+                next_node.prev = prev_node
 
-        self.__currentTrackNode = next_node
+            if current_track == self.__head:
+                self.__head = next_node
+            if current_track == self.__tail:
+                self.__tail = prev_node 
 
-        if self.__currentTrackNode:
-            print(f"Next track: {self.__currentTrackNode.track}")
+            # Move to the next track or stop playback if no tracks left
+            self.__currentTrackNode = next_node
+            if self.__currentTrackNode:
+                print(f"Next track: {self.__currentTrackNode.track.getTitle()}")
+            else:
+                self.__playing = False
+                print("No more tracks left in the queue.")
         else:
-            print("No more tracks left.")
-            self.__playing = False
+            # If repeat is ON, just move to the next track (no removal or pushing to the stack)
+            if self.__currentTrackNode.next:
+                self.__currentTrackNode = self.__currentTrackNode.next
+                print(f"Repeat is enabled. Now playing: {self.__currentTrackNode.track.getTitle()}")
+            else:
+                self.__currentTrackNode = self.__head
+                print(f"Repeat is enabled. Returning to the first track: {self.__currentTrackNode.track.getTitle()}")
 
+        # Save the updated queue state
         self.saveQueueToJson()
-
+        
     def previousTrack(self):
-        if not self.__currentTrackNode:
-            print("No tracks in the queue.")
-            return
-
-        # current_track = self.__currentTrackNode.track
-
+        """Move to the previous track in the queue, considering repeat behavior."""
         if self.__repeat:
-            self.__currentTrackNode = self.__currentTrackNode.prev or self.tail
-            print(f"Repeat is enabled. Playing previous track: {self.__currentTrackNode.track}")
-            return
-
-        if self.__currentTrackNode.prev:
-            self.__currentTrackNode = self.__currentTrackNode.prev
-            print(f"Previous track: {self.__currentTrackNode.track}")
+            # Repeat is ON: Move to the previous track without modifying the queue or stack
+            if self.__currentTrackNode.prev:
+                self.__currentTrackNode = self.__currentTrackNode.prev
+                print(f"Repeat is enabled. Now playing: {self.__currentTrackNode.track.getTitle()}")
+            else:
+                # If we're at the first track, move to the last track
+                self.__currentTrackNode = self.__tail
+                print(f"Repeat is enabled. Returning to the last track: {self.__currentTrackNode.track.getTitle()}")
         else:
-            print("No previous tracks. Staying on the current track.")
+            # If repeat is OFF, we can use the stack and modify the queue
+            if self.previousTracks.peek():
+                previous_track = self.previousTracks.pop()
+
+                # Insert track back into the queue
+                new_node = Node(previous_track)
+
+                if self.__currentTrackNode:
+                    new_node.next = self.__currentTrackNode
+                    new_node.prev = self.__currentTrackNode.prev
+                    if self.__currentTrackNode.prev:
+                        self.__currentTrackNode.prev.next = new_node
+                    self.__currentTrackNode.prev = new_node
+
+                    if self.__currentTrackNode == self.__head:
+                        self.__head = new_node
+                else:
+                    self.__head = new_node
+                    self.__tail = new_node
+
+                self.__currentTrackNode = new_node
+                print(f"Now playing: {self.__currentTrackNode.track.getTitle()}")
+
+                # Add the duration of the previous track to the total duration
+                self.__totalDuration += previous_track.getDurationInSeconds()
+
+            elif self.__repeat and self.__tail:
+                self.__currentTrackNode = self.__tail
+                print(f"Repeat is enabled. Returning to the last track: {self.__currentTrackNode.track.getTitle()}")
+
+            else:
+                print("No previous tracks available.")
+
+        # Save the queue state
+        self.previousTracks.saveToJson()
+        self.saveQueueToJson()
             
     def getQueueInfo(self):
         totalDurationStr = self.formatDuration(self.__totalDuration)
