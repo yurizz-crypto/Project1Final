@@ -8,15 +8,19 @@ class Playlist:
         self.__tracks = []
         self.__total_duration = "00:00"
 
+    # Returns the name of the playlist
     def getName(self):
         return self.__name
 
+    # Returns the total duration of the playlist
     def getTotalDuration(self):
         return self.__total_duration
 
+    # List of tracks in playlist
     def getTracks(self):
         return self.__tracks
 
+    # Checking if a track with the same title exist more than once in playlist
     def countSameTitles(self, track: Track):
         count = 0
         for i in self.__tracks:
@@ -24,6 +28,8 @@ class Playlist:
                 count += 1
         return count > 1
     
+    """Adds track to the playlist if track doesn't exist yet in the playlist and
+       Update the total duration"""
     def addTrack(self, track):
         if track not in self.__tracks:
             self.__tracks += [track]
@@ -31,6 +37,7 @@ class Playlist:
             return track
         return False
     
+    # Divide and Conquer approach to remove track in the playlist by title
     def removeTrack(self, title: str):
         def divideAndConquer(tracks):
             if not tracks:
@@ -38,7 +45,7 @@ class Playlist:
             
             if len(tracks) == 1:
                 track = tracks[0]
-                if track.getTitle() == title 
+                if track.getTitle() == title:
                     return [], track
                 else:
                     return [track], None
@@ -58,19 +65,21 @@ class Playlist:
             self.saveToJson()
         return removed_track
     
+    # Deleting playlist JSON file from the disk
     def deletePlaylist(self):
         filename = f"Data/Playlists/{self.getName()}.json"
         if os.path.exists(filename):
             os.remove(filename)
             return True
     
+    # Total Duration of playlist
     def updateTotalDuration(self):
         total_sec = 0
         track: Track
         for track in self.getTracks():
             total_sec += track.getDurationInSeconds()
         self.__total_duration = f"{total_sec // 60:02}:{total_sec % 60:02}"
-            
+ 
     def saveToJson(self):
         filename = f"Data/Playlists/{self.getName()}.json"
         with open(filename, 'w') as file:
