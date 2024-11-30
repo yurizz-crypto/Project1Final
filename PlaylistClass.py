@@ -74,7 +74,7 @@ class Playlist:
         total_sec = 0
         track: Track
         for track in self.getTracks():
-            total_sec += track.getDurationinSeconds()
+            total_sec += track.getDurationInSeconds()
         self.__total_duration = f"{total_sec // 60:02}:{total_sec % 60:02}"
             
     def saveToJson(self):
