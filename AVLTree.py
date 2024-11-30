@@ -2,7 +2,6 @@ from TrackClass import Track
 from PlaylistClass import Playlist
 import json
 
-
 class AVLNode:
     def __init__(self, track: Track):
         self.__track = track
