@@ -17,14 +17,14 @@ MENUS = {
         5 : "Exit"
     },
     "musicLibrary": {
-        1 : "Add a New Track",
-        2 : "View All Tracks",
-        3 : "Search for a Track",
-        4 : "Delete a Track",
-        5 : "Return to Main Menu",
+        1 : "Play Library",
+        2 : "Playlists",
+        3 : "Add a New Track",
+        4 : "View All Tracks",
+        5 : "Search for a Track",
         6 : "Delete a Track",
-        7 : "Add Track to a Playlist"
-        0 : "Exit:
+        7 : "Add Track to a Playlist",
+        0 : "Exit"
     },
     "playlists": {
         1 : "Create a New Playlist",
