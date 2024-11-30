@@ -491,50 +491,98 @@ class MusicQueue:
     def loadStateFromJSON(self):
         try:
             with open("Data/queue.json", "r") as file:
-                state = json.load(file)
+                # Read the file content
+                file_data = file.read().strip()
 
-            self.__shuffle = state.get("shuffle", False)
-            self.__repeat = state.get("repeat", False)
-            self.__playing = state.get("playing", False)
+                # Check if the file is empty
+                if not file_data:
+                    print("Queue file is empty. Initializing an empty queue.")
+                    self.__head = None
+                    self.__tail = None
+                    self.__currentTrackNode = None
+                    self.__totalDuration = 0
+                    self.__shuffle = False
+                    self.__repeat = False
+                    self.__playing = False
+                    return
 
-            queue_data = state.get("queue", [])
-            current_index = state.get("currentTrackIndex", 0)
+                # Parse JSON
+                state = json.loads(file_data)
 
-            self.__head = None
-            self.__tail = None
-            self.__totalDuration = 0
+                # Load queue state
+                self.__shuffle = state.get("shuffle", False)
+                self.__repeat = state.get("repeat", False)
+                self.__playing = state.get("playing", False)
 
-            previous_node = None
-            for track_data in queue_data:
-                track = Track(
-                    track_data["title"],
-                    track_data["artist"],
-                    track_data["album"],
-                    track_data["duration"]
-                )
-                new_node = Node(track)
+                queue_data = state.get("queue", [])
+                current_index = state.get("currentTrackIndex", 0)
 
-                if self.__head is None:
-                    self.__head = new_node
+                # Initialize queue
+                self.__head = None
+                self.__tail = None
+                self.__totalDuration = 0
+
+                previous_node = None
+                for track_data in queue_data:
+                    track = Track(
+                        track_data["title"],
+                        track_data["artist"],
+                        track_data["album"],
+                        track_data["duration"]
+                    )
+                    new_node = Node(track)
+
+                    if self.__head is None:
+                        self.__head = new_node
+                    else:
+                        previous_node.next = new_node
+                        new_node.prev = previous_node
+
+                    previous_node = new_node
+                    self.__totalDuration += self.convertToSeconds(track.getDuration())
+
+                # Set the tail after the loop
+                self.__tail = previous_node
+
+                # Retrieve and set the current track node
+                self.__currentTrackNode = self.getNodeAtIndex(current_index)
+
+                if self.__currentTrackNode:
+                    print(f"Resuming from track: {self.__currentTrackNode.track.getTitle()}")
                 else:
-                    previous_node.next = new_node
-                    new_node.prev = previous_node
-
-                previous_node = new_node
-                self.__totalDuration += track.getDurationInSeconds()
-
-            self.__tail = previous_node
-
-            if 0 <= current_index < len(queue_data):
-                self.__currentTrackNode = self.__head
-                for _ in range(current_index):
-                    self.__currentTrackNode = self.__currentTrackNode.next
-            else:
-                self.__currentTrackNode = None
+                    print("No current track to resume from.")
 
         except FileNotFoundError:
-            print("Queue file not found. Starting fresh.")
+            print("Queue file not found. Initializing an empty queue.")
+            self.__head = None
+            self.__tail = None
+            self.__currentTrackNode = None
+            self.__totalDuration = 0
+            self.__shuffle = False
+            self.__repeat = False
+            self.__playing = False
 
+        except json.JSONDecodeError:
+            print("Queue file contains invalid JSON. Initializing an empty queue.")
+            self.__head = None
+            self.__tail = None
+            self.__currentTrackNode = None
+            self.__totalDuration = 0
+            self.__shuffle = False
+            self.__repeat = False
+            self.__playing = False
+
+    
+    def getNodeAtIndex(self, index):
+        """Return the node at a specific index."""
+        current = self.__head
+        current_index = 0
+        while current:
+            if current_index == index:
+                return current
+            current = current.next
+            current_index += 1
+        return None
 
     def queueInterface(self):
         self.loadStateFromJSON()

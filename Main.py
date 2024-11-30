@@ -51,6 +51,50 @@ def showDuplicates(track_list: list):
 def shouldQuit(var: str) -> bool:
         return (True if var == "q" or var == "Q" else False)
 
+def addTrackToPlaylist(musicLibrary: AVLTree, playlistName: str) -> None:
+    playlist_obj = Playlist.loadFromJson(playlistName)
+    if not playlist_obj:
+        print(f"Playlist '{playlistName}' not found.")
+        return
+
+    while True:
+        title = input("Enter title of the track ('q' to cancel): ")
+        if shouldQuit(title):
+            break
+
+        duplicates = musicLibrary.getDuplicates(musicLibrary.getRoot(), title)
+        found = musicLibrary.searchTrack(title)
+
+        if len(duplicates) > 1:
+            showDuplicates(duplicates)
+            artist_name = input("\nSpecify track artist ('q' to cancel): ")
+            if shouldQuit(artist_name):
+                print(f"No track added to the playlist {playlistName}.")
+                break
+
+            track = musicLibrary.searchTrack(title, artist_name)
+            if track:
+                if track not in playlist_obj.getTracks():
+                    playlist_obj.addTrack(track)
+                    playlist_obj.saveToJson()
+                    print(f"Track '{track.getTitle()}' by {track.getArtist()} added successfully to the playlist.")
+                else:
+                    print(f"Track '{track.getTitle()}' is already in the playlist {playlistName}.")
+            else:
+                print("Track not found. Please try again.")
+
+        elif found:
+            if found not in playlist_obj.getTracks():
+                playlist_obj.addTrack(found)
+                playlist_obj.saveToJson()
+                print(f"{found.getTitle()} by {found.getArtist()} added successfully to the playlist.")
+            else:
+                print(f"Track '{found.getTitle()}' is already in the playlist {playlistName}.")
+        else:
+            print("Track not found. Please try again.")
+        
+        playlist_obj.saveToJson()
+
 def checkIfSpaceOnly(input_string: str):
     for char in input_string:
         if char != " ":
@@ -353,13 +397,10 @@ def main():
                 if shouldQuit(playlist_name):
                     continue
 
-                # addTrackToPlaylist(musicLibrary, playlist_name)
-                # ???? 
-
+                addTrackToPlaylist(musicLibrary, playlist_name)
+               
             case _:
                 print("Invalid Option.")
 
     if __name__ == "__main__":
         main()
-
-                    
