@@ -164,9 +164,6 @@ class AVLTree:
                 if removed_track:
                     print(f"Removed '{track.getTitle()}' by {track.getArtist()} from playlist '{playlist_name}'.")
 
-    def sort(self):
-        pass
-
     def getDuplicates(self, node: AVLNode, title) -> list:
         duplicates = []
         if node:
@@ -178,10 +175,6 @@ class AVLTree:
             duplicates += self.getDuplicates(node.getRight(), title)
         
         return duplicates
-    
-
-    def shuffle(self, node: AVLNode, result: list):
-        pass
     
     def traverse(self, node: AVLNode, result: list, order: str):
         if not node:
@@ -206,7 +199,10 @@ class AVLTree:
             right_duration = sum_durations(node.getRight())
             return node.getTrack().getDurationInSeconds() + left_duration + right_duration
         
-        total_Seconds = sum_durations
+        total_Seconds = sum_durations(self.getRoot())
+        minutes = total_Seconds // 60
+        seconds = total_Seconds % 60
+        return f"{minutes:02}:{seconds:02}"
 
     def getSortedTracks(self) -> list:
         result = []
