@@ -199,43 +199,76 @@ class MusicQueue:
 
     # Shuffle the queue (optional)
     def shuffleQueue(self):
-        if self.__head is None:
-            return  # No tracks to shuffle
+        """Shuffle the queue without losing the current track and correctly update the total duration."""
+        if not self.__head or not self.__head.next:
+            print("Queue is too small to shuffle.")
+            return
 
-        # Convert linked list to array
-        tracks = []
+        # Collect all nodes into a list
+        nodes = []
         current = self.__head
-        while current is not None:
-            tracks.append(current.track)
+        while current:
+            nodes.append(current)
             current = current.next
 
-        # Shuffle the array using a simple algorithm (Fisher-Yates)
-        n = len(tracks)
+        # Shuffle the list of nodes
+        n = len(nodes)
         for i in range(n - 1, 0, -1):
-            j = self.getRandomIndex(i + 1)  # Get a random index from 0 to i
-            tracks[i], tracks[j] = tracks[j], tracks[i]  # Swap
+            j = self.randomIndex(0, i)
+            nodes[i], nodes[j] = nodes[j], nodes[i]
 
-        # Rebuild the linked list from the shuffled array
-        self.__head = None
-        self.tail = None
-        for track in tracks:
-            self.addTrack(track)
+        self.__head = nodes[0]
+        self.__tail = nodes[-1]
+
+        for i in range(len(nodes)):
+            nodes[i].next = nodes[i + 1] if i + 1 < len(nodes) else None
+            nodes[i].prev = nodes[i - 1] if i - 1 >= 0 else None
+
+        self.__totalDuration = 0
+        current = self.__head
+        while current:
+            self.__totalDuration += current.track.getDurationInSeconds()
+            current = current.next
+
+        print("Queue shuffled successfully!")
+
+
+    def randomIndex(self, start, end):
+        """Generate a random index between start and end (inclusive)."""
+        if not hasattr(self, "randomSeed"):
+            self.randomSeed = 123456789
+
+        modulus = 233280
+        multiplier = 9301
+        increment = 49297
+
+        self.randomSeed = (self.randomSeed * multiplier + increment) % modulus
+
+        return start + (self.randomSeed % (end - start + 1))
 
 
 
-    def getRandomIndex(self, max_value):
-        """ Get a random index from 0 to max_value also ensuring their are new sets of shuffled queues every now and then """
-        # Simple linear congruential generator (LCG) for demonstration
-        seed = 123456789  # Example seed
-        a = 1664525
-        c = 1013904223
-        m = 2**32
+    def addTrackWithoutDuration(self, track: Track):
+        """Add a track to the queue without updating the total duration."""
+        if not track:
+            print("Invalid track. Skipping addition.")
+            return
 
-        # Generate a pseudo-random number
-        seed = (a * seed + c) % m
-        return seed % max_value
- 
+        new_node = Node(track)
+        if not self.__head:
+            self.__head = new_node
+            self.__tail = new_node
+        else:
+            self.__tail.next = new_node
+            new_node.prev = self.__tail
+            self.__tail = new_node
 
+        # Update __originalOrder manually
+        temp = [None] * (len(self.__originalOrder) + 1)
+        for i in range(len(self.__originalOrder)):
+            temp[i] = self.__originalOrder[i]
+        temp[len(self.__originalOrder)] = track
+        self.__originalOrder = temp
     # Play the next track
     def nextTrack(self):
         """Move to the next track in the queue and remove the finished track if repeat is OFF."""
