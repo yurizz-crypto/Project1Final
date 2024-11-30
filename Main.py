@@ -65,6 +65,36 @@ def showDuplicates(track_list: list):
 def shouldQuit(var: str) -> bool:
         return (True if var == "q" or var == "Q" else False)
 
+def checkIfSpaceOnly(input_string: str):
+    for char input_string:
+        if char != " ":
+            return False
+    return True
+
+def spaceCleaner(input_string: str):
+    start = 0
+    while start < len(input_string) and input_string[start] == " ":
+        start += 1
+
+    end = len(input_string) - 1
+    while end >= 0 and input_string[end] == " ":
+        end -= 1
+
+    trimmed = input_string[start:end + 1] if end >= start else ""
+
+    result = ""
+    in_space = False
+    for char in trimmed:
+        if char == " ":
+            if not in_space:
+                result += char
+            in_space = True
+        else:
+            result += char
+            in_space = False
+
+    return result
+
 def addTrack():
     def validateAndFormatDuration(duration):
         if ":" not in duration and len(duration) > 5 or len(duration) < 1:
