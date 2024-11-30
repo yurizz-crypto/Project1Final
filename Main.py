@@ -284,7 +284,7 @@ def main():
                 queue.queueInterface()
 
             case "2":
-                # The Diplay this if the input is 2
+                # Choosing case should display this
                 # 1: "Play a playlist",
                 # 2: "Create a New Playlist",
                 # 3: "View All Playlists",
@@ -300,16 +300,19 @@ def main():
 
                     if opt == "0":
                         break
-
-                    elif opt == "1":
-                        pass
+                    #Create and plays Existing playlist
+                    elif opt == "1": # Plays an Existing playlist
+                        playlistName = input("Enter the playlist name to play ('q' to cancel): ")
+                        if shouldQuit(playlistName):
+                            continue
+                        playPlaylist(playlistName, musicLibrary, queue)
 
                     elif opt == "2":  # Create a New Playlist
                         playlist_name = input("Enter new playlist name ('q' to cancel): ")
                         if shouldQuit(playlist_name):
                             continue
 
-                        if playlist_name in Playlist.getPlaylists():
+                        if playlist_name in Playlist.getPlaylistName():
                             print(f"Playlist '{playlist_name}' already exists.")
                         else:
                             new_playlist = Playlist(playlist_name)
