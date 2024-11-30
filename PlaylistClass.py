@@ -62,13 +62,9 @@ class Playlist:
     
     def deletePlaylist(self):
         filename = f"Fata/Playlists/{self.getName()}.json"
-        try:
-            if os.path.exists(filename):
-                os.remove(filename)
-                return True
-        except Exception as e:
-            print(f"An error occurred while deleting the playlists: {e}")
-        return False
+        if os.path.exists(filename):
+            os.remove(filename)
+            return True
     
     def updateTotalDuration(self):
         total_sec = 0
