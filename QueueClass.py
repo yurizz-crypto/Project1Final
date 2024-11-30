@@ -94,7 +94,13 @@ class MusicQueue:
             return f"{hours} hr {minutes} min {seconds} sec"
         else:
             return f"{minutes} min {seconds} sec"
-        
+    
+    def _iterateQueue(self):
+        """Helper to iterate over the queue nodes."""
+        current = self.__head
+        while current:
+            yield current
+            current = current.next
     # Add a track to the queue
     def addTrack(self, track: Track):
         """Add a track to the queue."""
