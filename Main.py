@@ -31,25 +31,13 @@ MENUS = {
     }
 }
 
-def showMenu(menu: str) -> str:
+def showMenu(menu: str) -> None:
     if menu in MENUS:
-        keys = list(MENUS[menu])
-        for i in range(len(keys)):
-            print("[{}]".format(str(keys[i])) + " " + MENUS[menu][keys[i]])
-    else:
-        print("Menu not found.")
-                
-def showDuplicates(track_list: list):
-    print("\nDuplicates:")
-    num = 0
-    for track in track_list:
-        print(track.__str__(True))
-        num += 1
+        for key, value in MENUS[menu].items():
+            print(f"[{key}] {value}")
 
-    print(f"\n{num} results found...")
-
-def shouldQuit(var: str) -> bool:
-        return (True if var == "q" or var == "Q" else False)
+def should_quit(var: str) -> bool:
+    return var == "q" or var == "Q"
 
 def addTrackToPlaylist(musicLibrary: AVLTree, playlistName: str) -> None:
     playlist_obj = Playlist.loadFromJson(playlistName)
@@ -59,7 +47,7 @@ def addTrackToPlaylist(musicLibrary: AVLTree, playlistName: str) -> None:
 
     while True:
         title = input("Enter title of the track ('q' to cancel): ")
-        if shouldQuit(title):
+        if should_quit(title):
             break
 
         duplicates = musicLibrary.getDuplicates(musicLibrary.getRoot(), title)
@@ -68,7 +56,7 @@ def addTrackToPlaylist(musicLibrary: AVLTree, playlistName: str) -> None:
         if len(duplicates) > 1:
             showDuplicates(duplicates)
             artist_name = input("\nSpecify track artist ('q' to cancel): ")
-            if shouldQuit(artist_name):
+            if should_quit(artist_name):
                 print(f"No track added to the playlist {playlistName}.")
                 break
 
@@ -95,7 +83,13 @@ def addTrackToPlaylist(musicLibrary: AVLTree, playlistName: str) -> None:
         
         playlist_obj.saveToJson()
 
-def checkIfSpaceOnly(input_string: str):
+def showDuplicates(track_list: list) -> None:
+    print("\nDuplicates:")
+    for track in track_list:
+        print(track.__str__(True))
+    print(f"\n{len(track_list)} results found...")
+
+def checkIfSpacesOnly(input_string: str):
     for char in input_string:
         if char != " ":
             return False
@@ -125,19 +119,13 @@ def spaceCleaner(input_string: str):
 
     return result
 
-def addTrack():
+def addTrack() -> Track | None | bool:
     def validateAndFormatDuration(duration):
         if ":" not in duration and len(duration) > 5 or len(duration) < 1:
             return None
 
-        colon_index = -1
-        for i in range(len(duration)):
-            if duration[i] == ":":
-                colon_index = i
-                break
-
-        minutes = duration[:colon_index]
-        seconds = duration[colon_index + 1:]
+        minutes = duration[:2]
+        seconds = duration[2 + 1:]
 
         for char in minutes:
             if not ('0' <= char <= '9'):
@@ -173,38 +161,38 @@ def addTrack():
         print("\n<---------Add Track--------->")
         print("Instruction | 'q' to cancel adding a track")
         title = input("Enter Title: ")
-        if shouldQuit(title):
+        if should_quit(title):
             print("Track addition canceled.\n")
             return None
-        if not title or checkIfSpaceOnly(title):
+        if not title or checkIfSpacesOnly(title):
             print("Title cannot be empty. Please enter a valid title.")
             continue
 
         artist = input("Enter Artist: ")
-        if shouldQuit(artist):
+        if should_quit(artist):
             print("Track addition canceled.\n")
             return None
-        if not artist or checkIfSpaceOnly(artist):
+        if not artist or checkIfSpacesOnly(artist):
             print("Artist cannot be empty. Please enter a valid artist.")
             continue
 
         additionalArtists = []
         while True:
             collaborators = input("Add Additional Artist(s)? (y/n): ")
-            if shouldQuit(collaborators):
+            if should_quit(collaborators):
                 print("Track addition canceled.\n")
                 return None
             elif collaborators == "y" or collaborators == "Y":
                 while True:
                     additional = input("Enter other Artist(s) ('q' to stop): ")
 
-                    if shouldQuit(additional):
+                    if should_quit(additional):
                         break
 
                     elif additional:
                         additionalArtists += [spaceCleaner(additional)]
 
-                    elif not additional or checkIfSpaceOnly(additional):
+                    elif not additional or checkIfSpacesOnly(additional):
                         print("Artist name cannot be empty.")
 
                 break
@@ -216,16 +204,16 @@ def addTrack():
                 print("Invalid input. Please enter 'y' or 'n'.")
 
         album = input("Enter Album Title: ")
-        if shouldQuit(album):
+        if should_quit(album):
             print("Track addition canceled.\n")
             return None
         
-        if not album or checkIfSpaceOnly(album):
+        if not album or checkIfSpacesOnly(album):
             print("Album cannot be empty. Please enter valid album.")
 
         while True:
             duration = input("Enter Duration (e.g., 1:42): ")
-            if shouldQuit(duration):
+            if should_quit(duration):
                 return None
 
             formattedDuration = validateAndFormatDuration(duration)
@@ -238,61 +226,43 @@ def addTrack():
         track = Track(spaceCleaner(title), spaceCleaner(artist), spaceCleaner(album), formattedDuration, additionalArtists)
         return (track if musicLibrary.searchTrack(track.getTitle(), track.getArtist()) == None else False)
 
-def playPlaylist(playlistName: str, musicLibrary: AVLTree, queue: MusicQueue):
-    # Check if the playlist exists
+def playPlaylist(playlistName: str,musicLibrary:Track, queue: MusicQueue):
     playlist = Playlist.loadFromJson(playlistName)
     if not playlist:
         print(f"Playlist '{playlistName}' not found.")
         return
 
-    # Clear the current queue
     queue.clearQueue()
 
-    # Add tracks from the playlist to the queue
     print(f"Loading playlist: {playlistName}")
     for track in playlist.getTracks():
         queue.addTrack(track)
 
-    #start playing current queue
     queue.play()
-
+    
     queue.queueInterface()
 
 def main():
-    # Main loop
     while True:
         print("\n<==========Listen to Music==========>")
         showMenu("musicLibrary")
         opt = input("\nEnter choice: ")
 
         match opt:
-            # If user choose to exit the program
             case "0":
                 musicLibrary.saveToJson()
-                print("Exiting Program...")
+                print("Exiting program. Goodbye!")
                 break
-
+            
             case "1":
-                # Clearing current queue and sorted tracks
                 queue.clearQueue()
 
-                # Adding sorted tracks to the queue
                 for track in musicLibrary.getSortedTracks():
                     queue.addTrack(track)
                 
-                # Start queue interface
                 queue.queueInterface()
 
             case "2":
-                # Choosing case 2 should display this
-                # 1: "Play a playlist",
-                # 2: "Create a New Playlist",
-                # 3: "View All Playlists",
-                # 4: "Add Track to a Playlist",
-                # 5: "Delete a Playlist",
-                # 6: "Display a Playlist",
-                # 7: "Delete a Track in Playlist",
-                # 8: "Return"
                 while True:
                     print("\n<---------Playlists--------->")
                     showMenu("playlists")
@@ -300,26 +270,26 @@ def main():
 
                     if opt == "0":
                         break
-                    #Create and plays Existing playlist
-                    elif opt == "1": # Plays an Existing playlist
+
+                    elif opt == "1":
                         playlistName = input("Enter the playlist name to play ('q' to cancel): ")
-                        if shouldQuit(playlistName):
+                        if should_quit(playlistName):
                             continue
                         playPlaylist(playlistName, musicLibrary, queue)
 
-                    elif opt == "2":  # Create a New Playlist
-                        playlist_name = input("Enter new playlist name ('q' to cancel): ")
-                        if shouldQuit(playlist_name):
+                    elif opt == "2":
+                        playlistName = input("Enter new playlist name ('q' to cancel): ")
+                        if should_quit(playlistName):
                             continue
 
-                        if playlist_name in Playlist.getPlaylistName():
-                            print(f"Playlist '{playlist_name}' already exists.")
+                        if playlistName in Playlist.getPlaylistName():
+                            print(f"Playlist '{playlistName}' already exists.")
                         else:
-                            new_playlist = Playlist(playlist_name)
+                            new_playlist = Playlist(spaceCleaner(playlistName))
                             new_playlist.saveToJson()
-                            print(f"Playlist '{playlist_name}' created successfully.")
-                    
-                    elif opt == "3": #View all the Playlist
+                            print(f"Playlist '{playlistName}' created successfully.")
+
+                    elif opt == "3":
                         playlist_names = Playlist.getPlaylistName()
                         if not playlist_names:
                             print("No playlists available.")
@@ -340,10 +310,10 @@ def main():
                                 else:
                                     print("Invalid input. Please try again.")
 
-                    elif opt == "4": # Add an Track to the Playlist
+                    elif opt == "4":
                         while True:
                             playlistName = input("Enter playlist name ('q' to cancel): ")
-                            if shouldQuit(playlistName):
+                            if should_quit(playlistName):
                                 break
 
                             if playlistName not in Playlist.getPlaylistName():
@@ -353,58 +323,89 @@ def main():
                                 addTrackToPlaylist(musicLibrary, playlistName)
                                 Playlist(playlistName).saveToJson()
                                 break
-            
-            # Adding a new track to the music library
+                            
+                    elif opt == "5":
+                        playlistName = input("Enter playlist name to delete ('q' to cancel): ")
+                        if should_quit(playlistName):
+                            continue
+
+                        if playlistName in Playlist.getPlaylistName():
+                            Playlist(playlistName).deletePlaylist()
+                            print(f"Playlist '{playlistName}' deleted successfully.")
+                        else:
+                            print(f"Playlist '{playlistName}' not found.")
+
+                    elif opt == "6":
+                        playlistName = input("Enter playlist name to display ('q' to cancel): ")
+                        if should_quit(playlistName):
+                            continue
+
+                        if playlistName in Playlist.getPlaylistName():
+                            print(Playlist.loadFromJson(playlistName))
+
+                        else:
+                            print(f"Playlist '{playlistName}' not found.")
+
+                    elif opt == "7":
+                        while True:
+                            playlistName = input("Enter playlist name ('q' to cancel): ")
+                            if should_quit(playlistName):
+                                break
+
+                            if playlistName not in Playlist.getPlaylistName():
+                                print(f"Playlist '{playlistName}' not found. Please check the name and try again.")
+                                continue
+
+                            playlist = Playlist.loadFromJson(playlistName)
+                            if playlist:
+                                track_title = input("Enter title of the track: ")
+                                
+                                deleted = playlist.removeTrack(track_title)
+                                if deleted != None:
+                                    print("Track deleted...\n")
+                                    break
+
+                                else:
+                                    print("Track not found in {}.\n".format(playlistName))
+                            
             case "3":
                 while True:
                     new_track = addTrack()
                     if new_track is None:
-                        # Exiting loop if user choose to cancel
                         break
                     elif new_track:
                         musicLibrary.addTrack(new_track)
-                        # Successful addition of track
-                        print("Track added successfully!\n")
-                        # Adding another track
-                        if input("Add another track? (y/n): ") == "n" or input("Add another track (y/n): ") == "N":
+                        print("Track added successfully...\n")
+                        if input("Add another track? (y/n): ") == "n" or input("Add another track (y/): ") == "N":
                             break
-                        # Saving changes to music library
                         musicLibrary.saveToJson()
-                    # If track is already in the library
-                    else:
-                        print("Track already exists.")
 
-            # Dsiplaying music library
+                    else:
+                        print("Track already exists...")
+
             case "4":
                 print(musicLibrary)
             
-            # Method for searching a track in music library
             case "5":
                 print("\n>>> Search for a Track <<<")
-                title = input("Enter Track title ('q' to cancel): ")
-                if shouldQuit(title):
+                title = input("Enter title of the track ('q' to cancel): ")
+                if should_quit(title):
                     continue
-                
-                # Searching duplicate track
+
                 duplicates = musicLibrary.getDuplicates(musicLibrary.getRoot(), title)
                 found = musicLibrary.searchTrack(title)
 
-                # If there is duplication:
                 if len(duplicates) > 1:
                     showDuplicates(duplicates)
-
-                # If no duplication, show track
-                elif found: 
+                elif found:
                     print(found)
-                
-                # If not found, notify
                 else:
                     print("Track not found.\n")
 
             case "6":
                 print("\n>>> Delete a Track <<<")
                 title = input("Enter title of the track ('q' to cancel): ")
-                if shouldQuit(title):
+                if should_quit(title):
                     print("Deletion Cancelled...\n")
                     continue
 
@@ -414,13 +415,13 @@ def main():
                 if len(duplicates) > 1:
                     showDuplicates(duplicates)
                     artist_name = input("Specify track artist ('q' to cancel): ")
-                    if shouldQuit(artist_name):
+                    if should_quit(artist_name):
                         continue
 
                     track = musicLibrary.searchTrack(title, artist_name)
                     if track:
+                        print(f"Track {track.getTitle()} by {track.getArtist()} deleted.\n")
                         musicLibrary.removeTrack(track)
-                        print("Track deleted.\n")
                         musicLibrary.saveToJson()
                     else:
                         print("Artist not found.")
@@ -431,14 +432,14 @@ def main():
                     print("Track not found.\n")
 
             case "7":
-                playlist_name = input("\nEnter playlist name ('q' to cancel): ")
-                if shouldQuit(playlist_name):
+                playlistName = input("\nEnter playlist name ('q' to cancel): ")
+                if should_quit(playlistName):
                     continue
 
-                addTrackToPlaylist(musicLibrary, playlist_name)
-               
+                addTrackToPlaylist(musicLibrary, playlistName)
+            
             case _:
                 print("Invalid Option.")
 
-    if __name__ == "__main__":
-        main()
+if __name__ == "__main__":
+    main()
