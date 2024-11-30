@@ -173,18 +173,12 @@ def main():
                 break
 
             case "1":
-              while True:
-                  new_track = addTrack
-                  if new_track is None:
-                      break
-                  elif new_track:
-                      musicLibrary.addTrack(new_track)
-                      print("Track added successfully!\n")
-                      if input ("Add another track? (y/n)") == "n" or input("Add another track (y/n): ") == "N":
-                          break
-                      musicLibrary.saveToJson
-                  else:
-                      print("Track already exists.")
+                queue.clearQueue()
+
+                for track in musicLibrary.getSortedTracks():
+                    queue.addTrack(track)
+                
+                queue.queueInterface()
 
             case "2":
                 # The Diplay this if the input is 2
@@ -209,7 +203,7 @@ def main():
 
                     elif opt == "2":  # Create a New Playlist
                         playlist_name = input("Enter new playlist name ('q' to cancel): ")
-                        if should_quit(playlist_name):
+                        if shouldQuit(playlist_name):
                             continue
 
                         if playlist_name in Playlist.getPlaylists():
@@ -220,20 +214,18 @@ def main():
                             print(f"Playlist '{playlist_name}' created successfully.")
             
             case "3":
-                print("\n>>> Search for a Track <<<")
-                title = input("Enter title of the track ('q' to cancel): ")
-                if shouldQuit(title):
-                    continue
-
-                duplicates = musicLibrary.getDuplicates(musicLibrary.getRoot(), title)
-                found = musicLibrary.searchTrack(title)
-
-                if len(duplicates) > 1:
-                    showDuplicates(duplicates)
-                elif found:
-                    print(found)
-                else: 
-                    print("Track not found.\n")
+                while True:
+                    new_track = addTrack()
+                    if new_track is None:
+                        break
+                    elif new_track:
+                        musicLibrary.addTrack(new_track)
+                        print("Track added successfully!\n")
+                        if input("Add another track? (y/n): ") == "n" or input("Add another track (y/n): ") == "N":
+                            break
+                        musicLibrary.saveToJson()
+                    else:
+                        print("Track already exists.")
 
             case "4":
                 print(musicLibrary)
@@ -257,7 +249,7 @@ def main():
             case "6":
                 print("\n>>> Delete a Track <<<")
                 title = input("Enter title of the track ('q' to cancel): ")
-                if should_quit(title):
+                if shouldQuit(title):
                     print("Deletion Cancelled...\n")
                     continue
 
@@ -267,7 +259,7 @@ def main():
                 if len(duplicates) > 1:
                     showDuplicates(duplicates)
                     artist_name = input("Specify track artist ('q' to cancel): ")
-                    if should_quit(artist_name):
+                    if shouldQuit(artist_name):
                         continue
 
                     track = musicLibrary.searchTrack(title, artist_name)
@@ -284,8 +276,8 @@ def main():
                     print("Track not found.\n")
 
             case "7":
-                playlist_name = input(\nEnter playlist name ('q' to cancel): ")
-                if should_quit(playlist_name):
+                playlist_name = input("\nEnter playlist name ('q' to cancel): ")
+                if shouldQuit(playlist_name):
                     continue
 
                 addTrackToPlaylist(musicLibrary, playlist_name)
