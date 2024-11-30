@@ -243,3 +243,37 @@ class MusicQueue:
         print(f"Repeat: {'Yes' if self.__repeat else 'No'}\n")
     
 
+    def displayQueue(self, page=1, pageSize=10):
+        """Display the queue with a formatted layout."""
+        current = self.__head
+        startIndex = (page - 1) * pageSize
+        count = 0
+
+        self.getQueueInfo()
+        print("Tracks:")
+
+        if self.__currentTrackNode:
+            playing_status = "(Playing)" if self.getPlay() else "(Paused)"
+            print(f"Currently Playing {playing_status}:\n")
+            print(f"\n{self.__currentTrackNode.track.__str__(True)}\n")
+            print("Next:\n")
+        else:
+            print("\nNo track is currently playing.\n")
+            print("Next:\n")
+
+        while current:
+            if startIndex > 0:
+                startIndex -= 1
+                current = current.next
+                continue
+
+            if count < pageSize:
+                track = current.track
+                print(f"({count + 1}) {track.__str__(True)}")
+                count += 1
+            else:
+                break
+            current = current.next
+
+        total_pages = self.getTotalPages(pageSize)
+        print(f"<Page {page} of {total_pages}>")
