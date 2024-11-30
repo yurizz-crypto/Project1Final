@@ -206,10 +206,8 @@ class AVLTree:
 
     def getSortedTracks(self) -> list:
         result = []
-        
-    
-    def getShuffledTracks(self) -> list:
-        result = []
+        self.traverse(self.__root, result, "inorder")
+        return result      
 
     def searchTrack(self, title: str, artist: str | None = None) -> Track:
         current = self._root
