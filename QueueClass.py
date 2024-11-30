@@ -1,7 +1,5 @@
 import json
 from TrackClass import Track
-from PlaylistClass import Playlist
-import AVLTree
 
 class Node:
     def __init__(self,track = None):
@@ -42,8 +40,8 @@ class MusicQueue:
         self.__repeat = True
         self.__playing = False  # Whether the track is currently playing
         self.__totalDuration = 0  # Total duration of all tracks in the queue
-        self.avlTree = AVLTree.AVLTree()
-
+        self.previousTracks = PreviousTrackStack()
+        
     # Accessor methods
     def getQueue(self):
         return self.__head
@@ -57,7 +55,7 @@ class MusicQueue:
         return self.__playing
     def getTotalDuration(self):
         return self.__totalDuration
-
+    
     
     # Mutator methods
     def setQueue(self, newQueue):
@@ -66,9 +64,26 @@ class MusicQueue:
     def setCurrentTrackNode(self, newTrackNode):
         self.__currentTrackNode = newTrackNode
     def setShuffled(self, newShuffle):
+        """Enable or disable shuffle and update the queue accordingly."""
+        if self.__shuffle == newShuffle:
+            return  # No change if shuffle state is the same
+
         self.__shuffle = newShuffle
+
         if self.__shuffle:
+            # Shuffle the queue
             self.shuffleQueue()
+        else:
+            # Restore the original order
+            self.__head = None
+            self.__tail = None
+            self.__totalDuration = 0
+
+            for track in self.__originalOrder:
+                self.addTrackWithoutDuration(track)  # Rebuild the queue
+                self.__totalDuration += track.getDurationInSeconds()
+
+            print("Queue restored to the original order.")
     def setRepeat(self, newRepeat):
         self.__repeat = newRepeat
     def setPlay(self, newPlay):
