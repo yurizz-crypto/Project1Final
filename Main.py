@@ -4,45 +4,31 @@ from PlaylistClass import Playlist
 from QueueClass import MusicQueue
 
 musicLibrary = AVLTree()
-musicLibrary.load_from_json()
-playlist = Playlist
+musicLibrary.loadFromJson()
 queue = MusicQueue()
+queue.loadStateFromJSON()
 
 MENUS = {
-    "main": {
-        1 : "Library",
-        2 : "Playlists",
-        3 : "Queue",
-        4 : "Now Playing",
-        5 : "Exit"
-    },
     "musicLibrary": {
-        1 : "Play Library",
-        2 : "Playlists",
-        3 : "Add a New Track",
-        4 : "View All Tracks",
-        5 : "Search for a Track",
-        6 : "Delete a Track",
-        7 : "Add Track to a Playlist",
-        0 : "Exit"
+        1: "Play Library",
+        2: "Playlists",
+        3: "Add a New Track",
+        4: "View All Tracks",
+        5: "Search for a Track",
+        6: "Delete a Track",
+        7: "Add Track to a Playlist",
+        0: "Exit"
     },
     "playlists": {
-        1 : "Create a New Playlist",
-        2 : "View All Playlist",
-        3 : "Add Tracks to a Playlist",
-        4 : "Delete a Playlist",
-        5 : "Display a Playlist",
-        6 : "Return to Main Menu"
-    },
-    "queue" : {
-        1 : "Play",
-        2 : "Next",
-        3 : "Previous",
-        4 : "Shuffle",
-        5 : "Repeat",
-        6 : "Clear Queue",
-        7 : "Exit"
-    }   
+        1: "Play a playlist",
+        2: "Create a New Playlist",
+        3: "View All Playlists",
+        4: "Add Track to a Playlist",
+        5: "Delete a Playlist",
+        6: "Display a Playlist",
+        7: "Delete a Track in Playlist",
+        0: "Return"
+    }
 }
 
 def showMenu(menu: str) -> str:
@@ -66,7 +52,7 @@ def shouldQuit(var: str) -> bool:
         return (True if var == "q" or var == "Q" else False)
 
 def checkIfSpaceOnly(input_string: str):
-    for char input_string:
+    for char in input_string:
         if char != " ":
             return False
     return True
@@ -280,7 +266,8 @@ def main():
                 if shouldQuit(playlist_name):
                     continue
 
-                addTrackToPlaylist(musicLibrary, playlist_name)
+                # addTrackToPlaylist(musicLibrary, playlist_name)
+                # ???? 
 
             case _:
                 print("Invalid Option.")
