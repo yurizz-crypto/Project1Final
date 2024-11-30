@@ -579,6 +579,3 @@ class MusicQueue:
                 self.clearQueue()
             else:
                 print("Invalid choice. Try again.")
-
-
-MusicQueue().queueInterface()
