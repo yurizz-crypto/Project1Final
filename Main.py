@@ -237,7 +237,7 @@ def main():
             case "5":
                 print("\n>>> Search for a Track <<<")
                 title = input("Enter Track title ('q' to cancel): ")
-                if should_quit(title):
+                if shouldQuit(title):
                     continue
 
                 duplicates = musicLibrary.getDuplicates(musicLibrary.getRoot(), title)
