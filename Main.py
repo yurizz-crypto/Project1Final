@@ -284,7 +284,7 @@ def main():
                 queue.queueInterface()
 
             case "2":
-                # Choosing case should display this
+                # Choosing case 2 should display this
                 # 1: "Play a playlist",
                 # 2: "Create a New Playlist",
                 # 3: "View All Playlists",
@@ -318,6 +318,41 @@ def main():
                             new_playlist = Playlist(playlist_name)
                             new_playlist.saveToJson()
                             print(f"Playlist '{playlist_name}' created successfully.")
+                    
+                    elif opt == "3": #View all the Playlist
+                        playlist_names = Playlist.getPlaylistName()
+                        if not playlist_names:
+                            print("No playlists available.")
+
+                        else:
+                            current_page = 1
+                            while True:
+                                print(Playlist.displayPlaylists(playlist_names, current_page))
+                                user_input = input("Enter option ('0' to Exit): ")
+                                if user_input == "0":
+                                    break
+                                elif user_input == "11":
+                                    if current_page > 1:
+                                        current_page -= 1
+                                elif user_input == "12":
+                                    if current_page < (len(playlist_names) + 6) // 7:
+                                        current_page += 1
+                                else:
+                                    print("Invalid input. Please try again.")
+
+                    elif opt == "4": # Add an Track to the Playlist
+                        while True:
+                            playlistName = input("Enter playlist name ('q' to cancel): ")
+                            if shouldQuit(playlistName):
+                                break
+
+                            if playlistName not in Playlist.getPlaylistName():
+                                print(f'Playlist "{playlistName}" not found.')
+                                continue
+                            else:
+                                addTrackToPlaylist(musicLibrary, playlistName)
+                                Playlist(playlistName).saveToJson()
+                                break
             
             # Adding a new track to the music library
             case "3":
