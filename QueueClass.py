@@ -132,7 +132,7 @@ class MusicQueue:
 
     
     # Get the tail (last track)
-    def Tail(self, head):
+    def Tail(self, head:Node):
         """Find the tail node of the linked list."""
         if not head:
             return None
@@ -186,10 +186,14 @@ class MusicQueue:
             print("No tracks in the queue.")
             return
 
-        # current_track = self.__currentTrackNode.track
+        self.previousTracks.push(self.__currentTrackNode.track)
+        self.__totalDuration -= self.__currentTrackNode.track.getDurationInSeconds()
 
         if self.__repeat:
-            self.__currentTrackNode = self.__currentTrackNode.next or self.__head
+            if not self.__currentTrackNode.next:
+                self.__currentTrackNode = self.__head
+            else:
+                self.__currentTrackNode = self.__currentTrackNode.next
             print(f"Repeat is enabled. Playing next track: {self.__currentTrackNode.track}")
             return
 
@@ -198,7 +202,7 @@ class MusicQueue:
             self.__head = next_node
             if self.__head:
                 self.__head.prev = None
-        else: 
+        else:
             if self.__currentTrackNode.prev:
                 self.__currentTrackNode.prev.next = next_node
             if next_node:
@@ -211,6 +215,8 @@ class MusicQueue:
         else:
             print("No more tracks left.")
             self.__playing = False
+
+        self.saveQueueToJson()
 
     def previousTrack(self):
         if not self.__currentTrackNode:
