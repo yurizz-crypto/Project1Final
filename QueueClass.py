@@ -277,3 +277,11 @@ class MusicQueue:
 
         total_pages = self.getTotalPages(pageSize)
         print(f"<Page {page} of {total_pages}>")
+        
+    def getTotalPages(self, pageSize=10):
+        length = 0
+        current = self.__head
+        while current:
+            length += 1
+            current = current.next
+        return (length + pageSize - 1) // pageSize
