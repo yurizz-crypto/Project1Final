@@ -385,3 +385,15 @@ class MusicQueue:
                 json.dump(state, file, indent=4)
         except Exception as e:
             print(f"Error saving queue: {e}")
+            
+    def getIndexOfNode(self, node: Node):
+        """Return the index of a given node in the queue."""
+        current = self.__head
+        index = 0
+        while current:
+            if current == node:
+                return index
+            current = current.next
+            index += 1
+        return -1
+    
