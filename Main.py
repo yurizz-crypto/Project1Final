@@ -220,18 +220,20 @@ def main():
                             print(f"Playlist '{playlist_name}' created successfully.")
             
             case "3":
-                while True:
-                    new_track = addTrack()
-                    if new_track is None:
-                        break
-                    elif new_track:
-                        musicLibrary.addTrack(new_track)
-                        print("Track added successfully!\n")
-                        if input("Add another track? (y/n): ") == "n" or input("Add another track (y/): ") == "N":
-                            break
-                        musicLibrary.saveToJson()
-                    else: 
-                        print("Track already exists.")
+                print("\n>>> Search for a Track <<<")
+                title = input("Enter title of the track ('q' to cancel): ")
+                if shouldQuit(title):
+                    continue
+
+                duplicates = musicLibrary.getDuplicates(musicLibrary.getRoot(), title)
+                found = musicLibrary.searchTrack(title)
+
+                if len(duplicates) > 1:
+                    showDuplicates(duplicates)
+                elif found:
+                    print(found)
+                else: 
+                    print("Track not found.\n")
 
             case "4":
                 print(musicLibrary)
