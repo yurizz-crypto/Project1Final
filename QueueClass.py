@@ -285,3 +285,20 @@ class MusicQueue:
             length += 1
             current = current.next
         return (length + pageSize - 1) // pageSize
+    
+    def saveQueueToJson(self):
+        """Save the queue state to a JSON file."""
+        queue_list = [node.track.toDict() for node in self._iterateQueue()]
+
+        state = {
+            "queue": queue_list,
+            "currentTrackIndex": self.getIndexOfNode(self.__currentTrackNode),
+            "shuffle": self.__shuffle,
+            "repeat": self.__repeat,
+        }
+
+        try:
+            with open("Data/queue.json", "w") as file:
+                json.dump(state, file, indent=4)
+        except Exception as e:
+            print(f"Error saving queue: {e}")
