@@ -31,6 +31,34 @@ class PreviousTrackStack:
         """Peek at the top of the stack without removing it."""
         return self.stack[-1] if self.stack else None
 
+    def saveToJson(self):
+        """Save the stack to a JSON file."""
+        try:
+            with open(self.filename, "w") as file:
+                json.dump([track.toDict() for track in self.stack], file, indent=4)
+        except Exception as e:
+            print(f"Error saving previous tracks: {e}")
+
+    def loadFromJson(self):
+        """Load the stack from a JSON file."""
+        try:
+            with open(self.filename, "r") as file:
+                file_data = ""
+                char = file.read(1)
+                while char:
+                    file_data += char
+                    char = file.read(1)
+                
+                if not file_data.strip():  # Check for empty file
+                    self.stack = []
+                    return
+
+                track_data = json.loads(file_data)  # Parse JSON manually
+                self.stack = [Track.fromDict(data) for data in track_data]
+        except (FileNotFoundError, json.JSONDecodeError):
+            print(f"Error loading previous tracks from {self.filename}. Initializing as empty.")
+            self.stack = []
+
 class MusicQueue:
     def __init__(self):
         self.__head = None  # The first track in the queue (linked list)
@@ -446,7 +474,51 @@ class MusicQueue:
         return -1
     
     def loadStateFromJSON(self):
-        pass
+        try:
+            with open("Data/queue.json", "r") as file:
+                state = json.load(file)
+
+            self.__shuffle = state.get("shuffle", False)
+            self.__repeat = state.get("repeat", False)
+            self.__playing = state.get("playing", False)
+
+            queue_data = state.get("queue", [])
+            current_index = state.get("currentTrackIndex", 0)
+
+            self.__head = None
+            self.__tail = None
+            self.__totalDuration = 0
+
+            previous_node = None
+            for track_data in queue_data:
+                track = Track(
+                    track_data["title"],
+                    track_data["artist"],
+                    track_data["album"],
+                    track_data["duration"]
+                )
+                new_node = Node(track)
+
+                if self.__head is None:
+                    self.__head = new_node
+                else:
+                    previous_node.next = new_node
+                    new_node.prev = previous_node
+
+                previous_node = new_node
+                self.__totalDuration += track.getDurationInSeconds()
+
+            self.__tail = previous_node
+
+            if 0 <= current_index < len(queue_data):
+                self.__currentTrackNode = self.__head
+                for _ in range(current_index):
+                    self.__currentTrackNode = self.__currentTrackNode.next
+            else:
+                self.__currentTrackNode = None
+
+        except FileNotFoundError:
+            print("Queue file not found. Starting fresh.")
     
     def queueInterface(self):
         self.loadStateFromJSON()
