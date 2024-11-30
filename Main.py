@@ -397,8 +397,8 @@ def main():
                 if shouldQuit(playlist_name):
                     continue
 
-                # addTrackToPlaylist(musicLibrary, playlist_name)
-                # ???? 
+                addTrackToPlaylist(musicLibrary, playlist_name)
+               
 
             case _:
                 print("Invalid Option.")
