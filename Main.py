@@ -173,16 +173,18 @@ def main():
                 break
 
             case "1":
-                print("\n>>>Playing Library <<<")
-                tracks = musicLibrary.getAllTracks()
-                if not tracks:
-                    print("No tracks available in the Library.")
-                else:
-                    for track in tracks:
-                        print(f"Now playing {track}")
-                        queue.addTrack(track)
-                        queue.play
-                        input("Press Enter to continue to the next track.")
+              while True:
+                  new_track = addTrack
+                  if new_track is None:
+                      break
+                  elif new_track:
+                      musicLibrary.addTrack(new_track)
+                      print("Track added successfully!\n")
+                      if input ("Add another track? (y/n)") == "n" or input("Add another track (y/n): ") == "N":
+                          break
+                      musicLibrary.saveToJson
+                  else:
+                      print("Track already exists.")
 
             case "2":
                 # The Diplay this if the input is 2
