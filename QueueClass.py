@@ -397,3 +397,52 @@ class MusicQueue:
             index += 1
         return -1
     
+    def loadStateFromJSON(self):
+        pass
+    
+    def queueInterface(self):
+        self.loadStateFromJSON()
+        if not isinstance(self.previousTracks, PreviousTrackStack):
+            print("Reinitializing previousTracks as PreviousTrackStack.")
+            self.previousTracks = PreviousTrackStack()
+        self.previousTracks.loadFromJson()
+
+        while True:
+            self.displayQueue()
+            print("\nOptions:")
+            print("[1] Play")
+            print("[2] Pause")
+            print("[3] Next")
+            print("[4] Previous")
+            print("[5] Turn off Repeat" if self.getRepeat() else "[5] Turn on Repeat")
+            print("[6] Turn off Shuffle" if self.getShuffled() else "[6] Turn on Shuffle")
+            print("[7] Clear Queue")
+            print("[0] Exit")
+            choice = input("Enter your choice: ")
+
+            if choice == "0":
+                self.saveQueueToJson()
+                self.previousTracks.saveToJson()
+                print("Exiting queue interface.")
+                break
+            elif choice == "1":
+                self.play()
+            elif choice == "2":
+                self.pause()
+            elif choice == "3":
+                self.nextTrack()
+                if not self.getPlay():
+                    self.setPlay(True)
+            elif choice == "4":
+                self.previousTrack()
+            elif choice == "5":
+                self.setRepeat(not self.getRepeat())
+            elif choice == "6":
+                self.setShuffled(not self.getShuffled())
+            elif choice == "7":
+                self.clearQueue()
+            else:
+                print("Invalid choice. Try again.")
+
+
+MusicQueue().queueInterface()
