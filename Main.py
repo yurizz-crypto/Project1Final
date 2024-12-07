@@ -6,7 +6,7 @@ from QueueClass import MusicQueue
 musicLibrary = AVLTree()
 musicLibrary.loadFromJson()
 queue = MusicQueue()
-queue.loadStateFromJSON()
+queue.loadState()
 
 MENUS = {
     "musicLibrary": {
@@ -273,7 +273,7 @@ def main():
                 
                 # Save the queue state
                 queue.saveState()
-                # Begin playback
+                # Automatically toggle play
                 queue.play()
                 # Display queue interface for interaction
                 queue.queueInterface()
