@@ -121,6 +121,18 @@ def spaceCleaner(input_string: str):
 
 def addTrack() -> Track | None | bool:
     def validateAndFormatDuration(duration):
+        """
+        Parameters:
+            duration (str): A string representing the duration in "mm:ss" format.
+        Returns:
+            str or None: Returns a formatted duration string if valid; otherwise, returns None
+
+        This method validates the input duration string to ensure it follows the "mm:ss" 
+        format checking for a single colon valid numeric values, and appropriate ranges 
+        (minutes >= 0, seconds between 0-59). It returns the formatted duration as a two-digit string or 
+        None if the input is invalid
+        """
+
          # Check for exactly one ':' in the input
         colon_count = 0
         colon_index = -1
