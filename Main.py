@@ -121,40 +121,89 @@ def spaceCleaner(input_string: str):
 
 def addTrack() -> Track | None | bool:
     def validateAndFormatDuration(duration):
-        if ":" not in duration and len(duration) > 5 or len(duration) < 1:
+         # Check for exactly one ':' in the input
+        colon_count = 0
+        colon_index = -1
+        length = 0
+
+        # Manually find the length of the input and locate the ':'
+        for char in duration:
+            length += 1
+            if char == ':':
+                colon_count += 1
+                colon_index = length - 1
+
+        if colon_count != 1 or length > 5 or length < 4:
             return None
 
-        minutes = duration[:2]
-        seconds = duration[2 + 1:]
+        # Separate minutes and seconds manually
+        minutes = ""
+        seconds = ""
+
+        for i in range(length):
+            if i < colon_index:
+                minutes += duration[i]
+            elif i > colon_index:
+                seconds += duration[i]
+
+        # Validate that minutes and seconds contain only digits
+        valid_digits = "0123456789"
 
         for char in minutes:
-            if not ('0' <= char <= '9'):
+            is_valid = False
+            for digit in valid_digits:
+                if char == digit:
+                    is_valid = True
+                    break
+            if not is_valid:
                 return None
 
         for char in seconds:
-            if not ('0' <= char <= '9'):
+            is_valid = False
+            for digit in valid_digits:
+                if char == digit:
+                    is_valid = True
+                    break
+            if not is_valid:
                 return None
 
+        # Convert minutes to an integer manually
         minutes_value = 0
-        for i in range(len(minutes)):
-            minutes_value = minutes_value * 10 + (int(minutes[i]))
+        for char in minutes:
+            for i in range(10):  # Loop through 0-9 to find the numeric value
+                if char == valid_digits[i]:
+                    minutes_value = minutes_value * 10 + i
+                    break
 
+        # Convert seconds to an integer manually
         seconds_value = 0
-        for i in range(len(seconds)):
-            seconds_value = seconds_value * 10 + (int(seconds[i]))
+        for char in seconds:
+            for i in range(10):  # Loop through 0-9 to find the numeric value
+                if char == valid_digits[i]:
+                    seconds_value = seconds_value * 10 + i
+                    break
 
+        # Check for valid range of minutes and seconds
         if minutes_value < 0 or seconds_value < 0 or seconds_value > 59:
             return None
 
-        formatted_minutes = str(minutes_value)
-        formatted_seconds = str(seconds_value)
+        # Format minutes and seconds manually to ensure two digits
+        formatted_minutes = ""
+        formatted_seconds = ""
 
-        if len(formatted_minutes) == 1:
-            formatted_minutes = "0" + formatted_minutes
+        if minutes_value < 10:
+            formatted_minutes += "0"
+        if minutes_value >= 10:
+            formatted_minutes += valid_digits[minutes_value // 10]
+        formatted_minutes += valid_digits[minutes_value % 10]
 
-        if len(formatted_seconds) == 1:
-            formatted_seconds = "0" + formatted_seconds
+        if seconds_value < 10:
+            formatted_seconds += "0"
+        if seconds_value >= 10:
+            formatted_seconds += valid_digits[seconds_value // 10]
+        formatted_seconds += valid_digits[seconds_value % 10]
 
+        # Return the formatted duration
         return formatted_minutes + ":" + formatted_seconds
 
     while True:
