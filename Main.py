@@ -243,6 +243,14 @@ def playPlaylist(playlistName: str,musicLibrary:Track, queue: MusicQueue):
     queue.queueInterface()
 
 def main():
+    """
+    Menu interface for managing and interacting with a music library, including tracks and playlists.
+        Managing tracks (add, search, delete);
+        Playing tracks/playlists;
+        Managing playlists (create, add/remove tracks, display, delete);
+        Persistent data storage in JSON format
+
+    """
     while True:
         print("\n<==========Listen to Music==========>")
         showMenu("musicLibrary")
@@ -250,18 +258,24 @@ def main():
 
         match opt:
             case "0":
+            # Exit Program
                 musicLibrary.saveToJson()
                 print("Exiting program. Goodbye!")
                 break
             
             case "1":
+            # Play all tracks in music library
                 queue.clearQueue()
 
+                # Add all sorted tracks to the queue
                 for track in musicLibrary.getSortedTracks():
                     queue.addTrack(track)
                 
+                # Save the queue state
                 queue.saveState()
+                # Begin playback
                 queue.play()
+                # Display queue interface for interaction
                 queue.queueInterface()
 
             case "2":
@@ -371,11 +385,13 @@ def main():
                                     print("Track not found in {}.\n".format(playlistName))
                             
             case "3":
+                # Adds new track
                 while True:
                     new_track = addTrack()
                     if new_track is None:
                         break
                     elif new_track:
+                        # Add track to library
                         musicLibrary.addTrack(new_track)
                         print("Track added successfully...\n")
                         if input("Add another track? (y/n): ") == "n" or input("Add another track (y/): ") == "N":
@@ -384,12 +400,15 @@ def main():
                     else:
                         print("Track already exists...")
                 
+                # Save updated library
                 musicLibrary.saveToJson()
 
             case "4":
+                # Display all tracks in the music library.
                 print(musicLibrary)
             
             case "5":
+                # Search for a track
                 print("\n>>> Search for a Track <<<")
                 title = input("Enter title of the track ('q' to cancel): ")
                 if should_quit(title):
@@ -399,6 +418,7 @@ def main():
                 found = musicLibrary.searchTrack(title)
 
                 if len(duplicates) > 1:
+                    # Handle duplicate tracks
                     showDuplicates(duplicates)
                 elif found:
                     print(found)
