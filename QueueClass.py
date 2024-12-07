@@ -215,6 +215,59 @@ class MusicQueue:
         """
         if self.__playing:
             self.__playing = False
+            
+    def queueInterface(self):
+        """
+            Create interactive Queue Menu 
+            Allowing users to control playback and modify settings interactively.
+            
+            User inputs trigger corresponding actions, such as shuffling the queue, 
+        restoring the original order, or saving the current state upon exiting. 
+        This ensures seamless interaction while maintaining the queue's state and behavior.
+        """
+        self.loadState()
+
+        while True:
+            self.displayQueue()
+            print("\nOptions:")
+            print("[1] Play")
+            print("[2] Pause")
+            print("[3] Next")
+            print("[4] Previous")
+            print("[5] Turn off __Repeat" if self.__repeat else "[5] Turn on __Repeat")
+            print("[6] Turn off Shuffle" if self.__shuffle else "[6] Turn on Shuffle")
+            print("[7] Clear Queue")
+            print("[0] Exit")
+            choice = input("Enter your choice: ")
+
+            if choice == "0":
+                self.saveState()
+                print("Exiting __queue interface.")
+                break
+            elif choice == "1":
+                self.play()
+            elif choice == "2":
+                self.pause()
+            elif choice == "3":
+                self.nextTrack()
+                if not self.__playing:
+                    self.play()
+            elif choice == "4":
+                self.previousTrack()
+                if not self.__playing:
+                    self.play()
+            elif choice == "5":
+                self.__repeat = False if self.__repeat else True
+            elif choice == "6":
+                self.__shuffle = False if self.__shuffle else True
+                if self.__shuffle:
+                    self.shuffleQueue()
+                else:
+                    self.__queue = self.__orig
+            elif choice == "7":
+                self.clearQueue()
+            else:
+                print("Invalid choice. Try again.")
 
 
     
