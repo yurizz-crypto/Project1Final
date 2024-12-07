@@ -173,8 +173,8 @@ class MusicQueue:
 
     def saveState(self):
         data = {
-            "queue": [Track.toDict() for track in self.__queue],
-            "orig": [Track.toDict() for track in self.__orig],
+            "queue": [track.toDict() for track in self.__queue],
+            "orig": [track.toDict() for track in self.__orig],
             "current_index": self.__current_index,
             "total_duration": self.__total_duration,
             "repeat": self.__repeat,
