@@ -238,8 +238,8 @@ def playPlaylist(playlistName: str,musicLibrary:Track, queue: MusicQueue):
     for track in playlist.getTracks():
         queue.addTrack(track)
 
+    queue.saveState()
     queue.play()
-    
     queue.queueInterface()
 
 def main():
