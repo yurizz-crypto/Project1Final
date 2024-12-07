@@ -45,28 +45,57 @@ class Playlist:
             return track
         return False
     
-    # Divide and Conquer approach to remove track in the playlist by title
     def removeTrack(self, title: str):
+        """
+        Removes a track from the playlist by its title through divide-and-conquer approach.
+
+        Title of the track (string) as the parameter.
+        """
         def divideAndConquer(tracks):
+            """
+            Helper method to recursively search for the track to remove.
+
+            Parameter: Tracks -> list of tracks to search through
+
+            Returns: Tuple
+            A list of remaining tracks and the removed track (if there is).
+            """
             if not tracks:
+                # If the list is empty, it returns and empty list and None
                 return [], None
             
-            if len(tracks) == 1:
+            # If there is only one track in the list:
+            if len(tracks) == 1: 
                 track = tracks[0]
+                # Checks if the title matched with the given title
                 if track.getTitle() == title:
+                    # If titles match, track will be remove else track is keep and returns None.
                     return [], track
                 else:
                     return [track], None
             
+            # Dividing the list into two halves.
             mid = len(tracks) // 2
+            # Recursive search in the left half
             left, removed_left = divideAndConquer(tracks[:mid])
+            # Recursive search in the right half
             right, removed_right = divideAndConquer(tracks[mid:])
 
+            # Checks which half contains the removed track
             removed_track = removed_left or  removed_right
+            # Combines remaining tracks and returns the removed track
             return left + right, removed_track
         
+        # Divide and conquer approach to find and remove the track.
         new_tracks, removed_track = divideAndConquer(self.__tracks)
 
+        """
+        If a track was removed:
+            Update the playlist with the remaining tracks;
+            Update the total duration of the playlist;
+            Save the updated playlist to a JSON file; and
+            Return the removed track.
+        """
         if removed_track:
             self.__tracks = new_tracks
             self.updateTotalDuration()
