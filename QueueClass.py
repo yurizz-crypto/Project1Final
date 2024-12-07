@@ -173,8 +173,8 @@ class MusicQueue:
 
     def saveState(self):
         data = {
-            "queue": [track.toDict() for track in self.__queue],
-            "orig": [track.toDict() for track in self.__orig],
+            "queue": [Track.toDict() for track in self.__queue],
+            "orig": [Track.toDict() for track in self.__orig],
             "current_index": self.__current_index,
             "total_duration": self.__total_duration,
             "repeat": self.__repeat,
@@ -183,6 +183,17 @@ class MusicQueue:
         }
         with open("Data/queue.json", "w") as file:
             json.dump(data, file, indent=4)
+    
+    def loadState(self):
+        with open("Data/queue.json", "r") as file:
+            data = json.load(file)
+            self.queue = [Track.fromDict(track_data) for track_data in data["queue"]]
+            self.orig = [Track.fromDict(track_data) for track_data in data["orig"]]
+            self.current_index = data["current_index"]
+            self.total_duration = data["total_duration"]
+            self.repeat = data["repeat"]
+            self.shuffle = data["shuffle"]
+            self.playing = data["playing"]
 
 
     
