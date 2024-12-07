@@ -90,7 +90,7 @@ class Playlist:
         new_tracks, removed_track = divideAndConquer(self.__tracks)
 
         """
-        If a track was removed:
+        If track is removed:
             Update the playlist with the remaining tracks;
             Update the total duration of the playlist;
             Save the updated playlist to a JSON file; and
@@ -102,22 +102,42 @@ class Playlist:
             self.saveToJson()
         return removed_track
     
-    # Deleting playlist JSON file from the disk
     def deletePlaylist(self):
+        """
+        Deletes the JSON file with the playlist from the disk.
+
+        Returns: Bool
+        True if file is successfully deleted, else False.
+        """
+
+        # Constructing file path
         filename = f"Data/Playlists/{self.getName()}.json"
+        # Check if the file exists, if it does then it will be deleted.
         if os.path.exists(filename):
             os.remove(filename)
             return True
     
-    # Total Duration of playlist
     def updateTotalDuration(self):
+        """
+        Updates total duration of the playlist by summing the duration of all tracks.
+
+        Duration of each track is retrived in seconds, and the total is converted to  
+        "MM:SS" format.
+        """
         total_sec = 0
         track: Track
+        # Iterate through all tracks in the playlist and add the duration of each track (in seconds).
         for track in self.getTracks():
             total_sec += track.getDurationInSeconds()
+        # Converts total seconds to "MM:SS" format
         self.__total_duration = f"{total_sec // 60:02}:{total_sec % 60:02}"
  
     def saveToJson(self):
+        """
+        Saves the playlist data to a JSON file.
+
+        The file is stored in 'Data/Playlists/' directory with the playlist name as the filename.
+        """
         filename = f"Data/Playlists/{self.getName()}.json"
         with open(filename, 'w') as file:
             json.dump({
