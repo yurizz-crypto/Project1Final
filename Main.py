@@ -260,6 +260,8 @@ def main():
                 for track in musicLibrary.getSortedTracks():
                     queue.addTrack(track)
                 
+                queue.saveState()
+                queue.play()
                 queue.queueInterface()
 
             case "2":
@@ -378,10 +380,11 @@ def main():
                         print("Track added successfully...\n")
                         if input("Add another track? (y/n): ") == "n" or input("Add another track (y/): ") == "N":
                             break
-                        musicLibrary.saveToJson()
 
                     else:
                         print("Track already exists...")
+                
+                musicLibrary.saveToJson()
 
             case "4":
                 print(musicLibrary)
