@@ -260,7 +260,7 @@ class AVLTree:
         updates all playlists by removing the track if it exists."""
         self.__root = self.delete(self.__root, track)
         
-        playlists = Playlist.getPlaylists()
+        playlists = Playlist.getPlaylistName()
         for playlist_name in playlists:
             playlist = Playlist.loadFromJson(playlist_name)
             if playlist:
@@ -339,7 +339,7 @@ class AVLTree:
             Track: The found track, or None if not found.
         """
         
-        current = self._root
+        current = self.__root
         while current:
             track = current.getTrack()
             if title == track.getTitle() and (artist is None or artist == track.getArtist()):

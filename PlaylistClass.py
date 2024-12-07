@@ -51,7 +51,7 @@ class Playlist:
 
         Title of the track (string) as the parameter.
         """
-        def divideAndConquer(tracks):
+        def divideAndConquer(tracks: list):
             """
             Helper method to recursively search for the track to remove.
 
