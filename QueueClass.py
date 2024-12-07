@@ -206,5 +206,15 @@ class MusicQueue:
             print("No tracks in the queue.")
         
         self.__playing = True
+        
+    def pause(self):
+        """
+            Pause a currently Playing track from playlist or Music Libary
+            
+            Return Status
+        """
+        if self.__playing:
+            self.__playing = False
+
 
     
