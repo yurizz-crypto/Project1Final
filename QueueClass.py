@@ -171,5 +171,18 @@ class MusicQueue:
         total_pages = (remainingTracks + pageSize - 1) // pageSize
         print(f"<Page {page} of {max(total_pages, 1)}>")
 
+    def saveState(self):
+        data = {
+            "queue": [track.toDict() for track in self.__queue],
+            "orig": [track.toDict() for track in self.__orig],
+            "current_index": self.__current_index,
+            "total_duration": self.__total_duration,
+            "repeat": self.__repeat,
+            "shuffle": self.__shuffle,
+            "playing": self.__playing,
+        }
+        with open("Data/queue.json", "w") as file:
+            json.dump(data, file, indent=4)
+
 
     
