@@ -8,29 +8,37 @@ class Playlist:
         self.__tracks = []
         self.__total_duration = "00:00"
 
-    # Returns the name of the playlist
     def getName(self):
         return self.__name
 
-    # Returns the total duration of the playlist
     def getTotalDuration(self):
         return self.__total_duration
 
-    # List of tracks in playlist
     def getTracks(self):
         return self.__tracks
 
-    # Checking if a track with the same title exist more than once in playlist
     def countSameTitles(self, track: Track):
+        """
+        Checks if a track with the same title appears more than once in the playlist.
+
+        Returns: Bool
+        True if a track with the same title exists more than once, else False.
+        """
         count = 0
         for i in self.__tracks:
+            # Iterate through all the tracks and compare title for each track.
             if i.getTitle() == track.getTitle():
+                # If titles match, increment the counter and return True if title appears more than once.
                 count += 1
         return count > 1
-    
-    """Adds track to the playlist if track doesn't exist yet in the playlist and
-       Update the total duration"""
+
     def addTrack(self, track):
+        """
+        Adds a track to the playlist if it does not exist yet and updates total duration.
+
+        Returns:
+        False (Boolean) if the track already exists else it returns the added track.
+        """
         if track not in self.__tracks:
             self.__tracks += [track]
             self.updateTotalDuration()
