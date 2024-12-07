@@ -194,6 +194,17 @@ class MusicQueue:
             self.repeat = data["repeat"]
             self.shuffle = data["shuffle"]
             self.playing = data["playing"]
-
+            
+    def play(self):
+        """
+            Play A Track from playlist or Music Library
+            
+            Return No tracks if not Found 
+            else Play
+        """
+        if not self.__queue and not self.__repeat:
+            print("No tracks in the queue.")
+        
+        self.__playing = True
 
     
