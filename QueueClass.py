@@ -194,16 +194,23 @@ class MusicQueue:
         """
         return len(self.queue) == 0
             
-    def saveState(self):
+    def saveState(self, source="Library", playlist_name=None):
+        """
+        Saves the current state of the queue to a JSON file.
+        """
         data = {
-            "queue": [track.toDict() for track in self.__queue],
-            "orig": [track.toDict() for track in self.__orig],
-            "current_index": self.__current_index,
-            "total_duration": self.__total_duration,
-            "repeat": self.__repeat,
-            "shuffle": self.__shuffle,
-            "playing": self.__playing,
+            "source": source,
+            "playlist_name": playlist_name,
+            "queue": [track.toDict() for track in self.queue],
+            "orig": [track.toDict() for track in self.orig],
+            "current_index": self.current_index,
+            "total_duration": self.total_duration,
+            "repeat": self.repeat,
+            "shuffle": self.shuffle,
+            "playing": self.playing
         }
+        
+        # Write data to 'queue.json'
         with open("Data/queue.json", "w") as file:
             json.dump(data, file, indent=4)
     
