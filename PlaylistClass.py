@@ -147,19 +147,21 @@ class Playlist:
                 }, file, indent=2)
 
     @staticmethod
-    def loadFromJson(playlistname: str):
+   # This decorator indicates that the method is a static method,
+    def loadFromJson(playlistname: str): # Defines the method 'loadFromJson' which takes the name of the playlist as a string parameter.
         filename = f"Data/Playlists/{playlistname}.json"
         try:
             with open (filename, 'r') as file:
-                data = json.load(file)
-                playlist = Playlist(data["name"])
+                data = json.load(file)  # Parses the JSON file contents and loads them into a Python dictionary.
+                playlist = Playlist(data["name"]) 
                 playlist.__total_duration = data["total_duration"]
-                for track_data in data["tracks"]:
+                for track_data in data["tracks"]: # Iterates over each track's data in the 'tracks' field of the loaded JSON data
                     track = Track.fromDict(track_data)
                     playlist.addTrack(track)
                 return playlist
-        except FileNotFoundError:
-            return None
+        except FileNotFoundError: # If a FileNotFoundError occurs , the exception is caught here.
+            return None 
+             # Returns None to indicate that the playlist could not be loaded because the file was not found.
 
     @staticmethod
     def displayPlaylists(playlists: list, page: int = 1, items_per_page: int = 10):
