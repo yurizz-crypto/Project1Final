@@ -165,16 +165,17 @@ class Playlist:
 
     @staticmethod
     def displayPlaylists(playlists: list, page: int = 1, items_per_page: int = 10):
-        total_pages = (len(playlists) + items_per_page - 1) // items_per_page
-        if page < 1 or page > total_pages:
+        total_pages = (len(playlists) + items_per_page - 1) // items_per_page # Calculates the total number of pages based on the number of playlists and the number of items to display per page.
+        if page < 1 or page > total_pages: # Checks if the requested page number is invalid
             return False
 
-        start_index = (page - 1) * items_per_page
-        end_index = start_index + items_per_page
-        page_playlists = playlists[start_index:end_index]
+        start_index = (page - 1) * items_per_page   # Calculates the starting index for the current page based on the page number and items per page.
+        end_index = start_index + items_per_page      # Calculates the ending index for the current page.
+        page_playlists = playlists[start_index:end_index]   # Slices the 'playlists' list to get only the playlists for the current page.
 
         display = "List of Playlists:\n\n"
-        current_index = start_index + 1
+        current_index = start_index + 1    # Initializes the index for the playlists on the current page, starting at the correct number .
+
         for playlist in page_playlists:
             display += f"[{current_index}] {playlist}\n"
             current_index += 1
@@ -182,9 +183,9 @@ class Playlist:
         display += f"\n<Page {page} of {total_pages}>\n"
 
         if page > 1:
-            display += f"[11] Previous Page\n"
+            display += f"[11] Previous Page\n" # Adds a link for navigating to the previous page.
         if page < total_pages:
-            display += f"[12] Next Page\n"
+            display += f"[12] Next Page\n"  # Adds a link for navigating to the next page.
 
         return display
 
