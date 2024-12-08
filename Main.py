@@ -345,7 +345,13 @@ def addTrack() -> Track | None | bool:
         track = Track(spaceCleaner(title), spaceCleaner(artist), spaceCleaner(album), formattedDuration, additionalArtists)
         return (track if musicLibrary.searchTrack(track.getTitle(), track.getArtist()) == None else False)
 
-def playPlaylist(playlistName: str,musicLibrary:Track, queue: MusicQueue):
+def playPlaylist(playlistName: str, queue: MusicQueue):
+    """
+    Plays a specific playlist. Checks if the playlist exists and adds it to the queue.
+
+    Returns:
+        nothing: If the playlist does not exists.
+    """
     playlist = Playlist.loadFromJson(playlistName)
     if not playlist:
         print(f"Playlist '{playlistName}' not found.")
@@ -360,7 +366,6 @@ def playPlaylist(playlistName: str,musicLibrary:Track, queue: MusicQueue):
     queue.play()
     queue.queueInterface()
     queue.saveState(source="Playlist", playlist_name=playlistName)
-
 
 def main():
     """
@@ -407,7 +412,7 @@ def main():
                         playlistName = input("Enter the playlist name to play ('q' to cancel): ")
                         if should_quit(playlistName):
                             continue
-                        playPlaylist(playlistName, musicLibrary, queue)
+                        playPlaylist(playlistName, queue)
 
                     elif opt == "2":
                         playlistName = input("Enter new playlist name ('q' to cancel): ")
