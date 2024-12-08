@@ -215,8 +215,13 @@ class MusicQueue:
             json.dump(data, file, indent=4)
     
     def loadState(self):
+        """
+        Loads the saved queue state from a JSON file, including its source and associated playlist.
+        """
         with open("Data/queue.json", "r") as file:
             data = json.load(file)
+            self.source = data["source"]
+            self.playlist_name = data.get("playlist_name")
             self.queue = [Track.fromDict(track_data) for track_data in data["queue"]]
             self.orig = [Track.fromDict(track_data) for track_data in data["orig"]]
             self.current_index = data["current_index"]
@@ -224,6 +229,7 @@ class MusicQueue:
             self.repeat = data["repeat"]
             self.shuffle = data["shuffle"]
             self.playing = data["playing"]
+
             
     def play(self):
         """
