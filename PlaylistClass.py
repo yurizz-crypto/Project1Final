@@ -51,7 +51,7 @@ class Playlist:
 
         Title of the track (string) as the parameter.
         """
-        def divideAndConquer(tracks: list):
+        def divideAndConquer(tracks):
             """
             Helper method to recursively search for the track to remove.
 
@@ -116,6 +116,8 @@ class Playlist:
         if os.path.exists(filename):
             os.remove(filename)
             return True
+        
+        return False
     
     def updateTotalDuration(self):
         """
@@ -125,7 +127,6 @@ class Playlist:
         "MM:SS" format.
         """
         total_sec = 0
-        track: Track
         # Iterate through all tracks in the playlist and add the duration of each track (in seconds).
         for track in self.getTracks():
             total_sec += track.getDurationInSeconds()
