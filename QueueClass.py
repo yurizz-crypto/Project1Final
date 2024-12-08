@@ -171,6 +171,29 @@ class MusicQueue:
         total_pages = (remainingTracks + pageSize - 1) // pageSize
         print(f"<Page {page} of {max(total_pages, 1)}>")
 
+    def checkAndLoadState(self, source, playlist_name=None):
+        """
+        Compares the current source and playlist with the saved state.
+        Clears the queue if the sources differ or the playlist names do not match.
+        
+        Parameters:
+            source (str): The intended source ('Library' or 'Playlist').
+            playlist_name (str or None): The playlist name, if applicable.
+        """
+        self.loadState()
+        if self.source != source or (source == "Playlist" and self.playlist_name != playlist_name):
+            self.clearQueue()  # Clears queue if source or playlist doesn't match
+            self.source = source
+            self.playlist_name = playlist_name
+            
+    def isQueueEmpty(self):
+        """
+        Check if the queue is empty.
+        Returns:
+            bool: True if the queue is empty, False otherwise.
+        """
+        return len(self.queue) == 0
+            
     def saveState(self):
         data = {
             "queue": [track.toDict() for track in self.__queue],
