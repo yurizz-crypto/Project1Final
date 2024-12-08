@@ -234,7 +234,7 @@ class MusicQueue:
             print("[2] Pause")
             print("[3] Next")
             print("[4] Previous")
-            print("[5] Turn off __Repeat" if self.__repeat else "[5] Turn on __Repeat")
+            print("[5] Turn off Repeat" if self.__repeat else "[5] Turn on Repeat")
             print("[6] Turn off Shuffle" if self.__shuffle else "[6] Turn on Shuffle")
             print("[7] Clear Queue")
             print("[0] Exit")

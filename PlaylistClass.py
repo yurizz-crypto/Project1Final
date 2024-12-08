@@ -143,7 +143,7 @@ class Playlist:
             json.dump({
                 "name": self.__name,
                 "total_duration":self.__total_duration,
-                "track":[track.toDict() for track in self.getTracks()]
+                "tracks":[track.toDict() for track in self.getTracks()]
                 }, file, indent=2)
 
     @staticmethod
@@ -159,9 +159,7 @@ class Playlist:
                     playlist.addTrack(track)
                 return playlist
         except FileNotFoundError:
-            print(f"File {filename}not found.")
-
-        return None
+            return None
 
     @staticmethod
     def displayPlaylists(playlists: list, page: int = 1, items_per_page: int = 10):
