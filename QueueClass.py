@@ -5,13 +5,13 @@ class MusicQueue:
     def __init__(self) -> None:
         self.__queue = []
         self.__orig = []
-        self.__current_index = 0
+        self.__currentIndex = 0
         self.__total_duration = 0
         self.__repeat = False
         self.__shuffle = False
         self.__playing = False
         self.source = None
-        self.playlist_name = None
+        self.playlistName = None
 
     def addTrack(self, newTrack: Track):
 
@@ -33,10 +33,10 @@ class MusicQueue:
         
         """
         if self.__repeat:
-            self.__current_index = (self.__current_index + 1) % len(self.__queue)
+            self.__currentIndex = (self.__currentIndex + 1) % len(self.__queue)
         else:
-            if self.__current_index + 1 < len(self.__queue):
-                self.__current_index += 1
+            if self.__currentIndex + 1 < len(self.__queue):
+                self.__currentIndex += 1
             else:
                 self.__playing = False
 
@@ -48,10 +48,10 @@ class MusicQueue:
         if at the start of the queue it does nothing
         """
         if self.__repeat:
-            self.__current_index = (self.__current_index - 1) % len(self.__queue)
+            self.__currentIndex = (self.__currentIndex - 1) % len(self.__queue)
         else:
-            if self.__current_index > 0:
-                self.__current_index -= 1
+            if self.__currentIndex > 0:
+                self.__currentIndex -= 1
             else:
                 return
     def updateTotalDuration(self):
@@ -62,7 +62,7 @@ class MusicQueue:
         """
         if self.__queue:
             total = 0
-            for track in self.__queue[self.__current_index:]:
+            for track in self.__queue[self.__currentIndex:]:
                 total += track.getDurationInSeconds()
 
             self.__total_duration = total
@@ -77,26 +77,30 @@ class MusicQueue:
         in its original position after shuffling the remaining tracks
 
         """
-        if self.__orig:
+        # Handle empty queue or single track
+        if len(self.__queue) <= 1:
+            return
+    
+        if self.__orig and self.__queue:
             # Save the original order manually
             self.__orig = [track for track in self.__queue]
+            
 
         # Exclude the currently playing track
-        currentlyPlayingTrack = self.__queue[self.__current_index]
-        remainingTracks = self.__queue[:self.__current_index] + self.__queue[self.__current_index + 1:]
+        currentlyPlayingTrack = self.__queue[self.__currentIndex]
+        remainingTracks = self.__queue[:self.__currentIndex] + self.__queue[self.__currentIndex + 1:]
 
         # Fisher-Yates Shuffle for the remaining tracks
         n = len(remainingTracks)
         seed = 1337
         for i in range(n - 1, 0, -1):
             seed = (seed * 1103515245 + 12345) & 0x7FFFFFFF
-            random_index = seed % (i + 1)
+            randomIndex = seed % (i + 1)
             # Swap elements at i and random_index
-            remainingTracks[i], remainingTracks[random_index] = remainingTracks[random_index], remainingTracks[i]
+            remainingTracks[i], remainingTracks[randomIndex] = remainingTracks[randomIndex], remainingTracks[i]
 
         # Reconstruct the queue: Place the currently playing track back in its original position
-        self.__queue = remainingTracks[:self.__current_index] + [currentlyPlayingTrack] + remainingTracks[self.__current_index:]
-
+        self.__queue = remainingTracks[:self.__currentIndex] + [currentlyPlayingTrack] + remainingTracks[self.__currentIndex:]
 
     def clearQueue(self):
 
@@ -106,7 +110,7 @@ class MusicQueue:
         """
         self.__queue = []
         self.__orig = []
-        self.__current_index = 0
+        self.__currentIndex = 0
         self.__total_duration = 0
         self.__repeat = False
         self.__shuffle = False
@@ -148,45 +152,43 @@ class MusicQueue:
 
         if self.__queue:
             print(f"Currently Playing {'(Playing)' if self.__playing else '(Paused)'}:")
-            print(f"\t{self.__queue[self.__current_index].__str__(True)}\n")
+            print(f"\t{self.__queue[self.__currentIndex].__str__(True)}\n")
             print("Next:")
         else:
             print("\nNo track is currently playing.\n")
             print("Next:")
 
-        if self.__current_index + 1 < len(self.queue):
-            startIndex = self.__current_index + 1 + (page - 1) * pageSize
+        if self.__currentIndex + 1 < len(self.__queue):
+            startIndex = self.__currentIndex + 1 + (page - 1) * pageSize
             endIndex = startIndex + pageSize
 
             if endIndex > len(self.__queue):
                 endIndex = len(self.__queue)
 
             for i in range(startIndex, endIndex):
-                print(f"({i - self.__current_index}) {self.__queue[i].__str__(True)}")
+                print(f"({i - self.__currentIndex}) {self.__queue[i].__str__(True)}")
         else:
             if not self.__repeat:
                 print("No more tracks in queue.")
-            else:
-                print(f"(1) {self.__queue[0].__str__(True)}")
 
-        remainingTracks = len(self.__queue) - (self.__current_index + 1)
+        remainingTracks = len(self.__queue) - (self.__currentIndex + 1)
         total_pages = (remainingTracks + pageSize - 1) // pageSize
         print(f"<Page {page} of {max(total_pages, 1)}>")
 
-    def checkAndLoadState(self, source, playlist_name=None):
+    def checkAndLoadState(self, source, playlistName=None):
         """
         Compares the current source and playlist with the saved state.
         Clears the queue if the sources differ or the playlist names do not match.
         
         Parameters:
             source (str): The intended source ('Library' or 'Playlist').
-            playlist_name (str or None): The playlist name, if applicable.
+            playlistName (str or None): The playlist name, if applicable.
         """
         self.loadState()
-        if self.source != source or (source == "Playlist" and self.playlist_name != playlist_name):
+        if self.source != source or (source == "Playlist" and self.playlistName != playlistName):
             self.clearQueue()  # Clears queue if source or playlist doesn't match
             self.source = source
-            self.playlist_name = playlist_name
+            self.playlistName = playlistName
             
     def isQueueEmpty(self):
         """
@@ -196,16 +198,16 @@ class MusicQueue:
         """
         return len(self.__queue) == 0
             
-    def saveState(self, source="Library", playlist_name=None):
+    def saveState(self, source="Library", playlistName=None):
         """
         Saves the current state of the queue to a JSON file.
         """
         data = {
             "source": source,
-            "playlist_name": playlist_name,
+            "playlistName": playlistName,
             "queue": [track.toDict() for track in self.__queue],
             "orig": [track.toDict() for track in self.__orig],
-            "current_index": self.__current_index,
+            "current_index": self.__currentIndex,
             "total_duration": self.__total_duration,
             "repeat": self.__repeat,
             "shuffle": self.__shuffle,
@@ -223,10 +225,10 @@ class MusicQueue:
         with open("Data/queue.json", "r") as file:
             data = json.load(file)
             self.source = data["source"]
-            self.playlist_name = data.get("playlist_name")
+            self.playlistName = data.get("playlistName")
             self.__queue = [Track.fromDict(track_data) for track_data in data["queue"]]
             self.__orig = [Track.fromDict(track_data) for track_data in data["orig"]]
-            self.__current_index = data["current_index"]
+            self.__currentIndex = data["current_index"]
             self.__total_duration = data["total_duration"]
             self.__repeat = data["repeat"]
             self.__shuffle = data["shuffle"]
@@ -267,7 +269,7 @@ class MusicQueue:
             if self.source == "Library":
                 self.saveState()
             else:
-                self.saveState("Playlist", self.playlist_name)
+                self.saveState("Playlist", self.playlistName)
                 
             self.displayQueue()
             print("\nOptions:")
