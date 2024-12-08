@@ -395,7 +395,6 @@ def main():
                                 continue
                             else:
                                 addTrackToPlaylist(musicLibrary, playlistName)
-                                Playlist(playlistName).saveToJson()
                                 break
                             
                     elif opt == "5":
