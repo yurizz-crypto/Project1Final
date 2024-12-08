@@ -47,13 +47,15 @@ class MusicQueue:
         if the repeat mode is enabled it wraps around to the end of the queue 
         if at the start of the queue it does nothing
         """
-        if self.__repeat:
-            self.__current_index = (self.__current_index - 1) % len(self.__queue)
-        else:
-            if self.__current_index > 0:
-                self.__current_index -= 1
+        if self.__queue:
+            if self.__repeat:
+                self.__current_index = (self.__current_index - 1) % len(self.__queue)
             else:
-                return
+                if self.__current_index > 0:
+                    self.__current_index -= 1
+                else:
+                    return
+                
     def updateTotalDuration(self):
 
         """
