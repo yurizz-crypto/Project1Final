@@ -103,7 +103,6 @@ class AVLTree:
         
         # Update heights after rotation.
         self.updateHeight(root)
-        
         self.updateHeight(rootLeft)
         
         return rootLeft
@@ -191,6 +190,7 @@ class AVLTree:
     def insert(self, node: AVLNode, track: Track):
         """Inserts a track, updates node heights, 
         and balances the AVL tree."""
+        
         if not node:
             return AVLNode(track)
 
@@ -225,6 +225,7 @@ class AVLTree:
     def delete(self, node: AVLNode, track: Track): 
         """Deletes a track from the AVL tree 
             by locating the node containing the track """
+            
         if not node:
             return node
 
@@ -258,19 +259,16 @@ class AVLTree:
     def removeTrack(self, track: Track):
         """Removes a track from the AVL tree and 
         updates all playlists by removing the track if it exists."""
+        
         self.__root = self.delete(self.__root, track)
         
-        playlists = Playlist.getPlaylistName()
-        for playlist_name in playlists:
-            playlist = Playlist.loadFromJson(playlist_name)
-            if playlist:
-                removed_track = playlist.removeTrack(track.getTitle(), track.getArtist())
-                if removed_track:
-                    print(f"Removed '{track.getTitle()}' by {track.getArtist()} from playlist '{playlist_name}'.")
+        for playlistName in Playlist.getPlaylists():
+            Playlist.loadFromJson(playlistName).removeTrack(track.getTitle(), track.getArtist())
 
     def getDuplicates(self, node: AVLNode, title) -> list:
         """searches ang AVL tree for tracks with 
         the given title and returns a list of duplicates"""
+        
         duplicates = []
         if node:
             duplicates += self.getDuplicates(node.getLeft(), title)
@@ -285,6 +283,7 @@ class AVLTree:
     def traverse(self, node: AVLNode, result: list, order: str):
         """Traverses the AVL tree in-order and appends tracks to 
         the result list."""
+        
         if not node:
             return
         
@@ -358,6 +357,7 @@ class AVLTree:
     def loadFromJson(self, filename="Data/tracks.json"):
         """Loads tracks from a JSON file and inserts them into the AVL tree.
         handles missing file errors."""
+        
         try:
             with open(filename, 'r') as file:
                 data = json.load(file)
