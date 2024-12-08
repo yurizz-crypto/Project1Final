@@ -194,7 +194,7 @@ class MusicQueue:
         Returns:
             bool: True if the queue is empty, False otherwise.
         """
-        return len(self.queue) == 0
+        return len(self.__queue) == 0
             
     def saveState(self, source="Library", playlist_name=None):
         """
@@ -203,13 +203,13 @@ class MusicQueue:
         data = {
             "source": source,
             "playlist_name": playlist_name,
-            "queue": [track.toDict() for track in self.queue],
-            "orig": [track.toDict() for track in self.orig],
-            "current_index": self.current_index,
-            "total_duration": self.total_duration,
-            "repeat": self.repeat,
-            "shuffle": self.shuffle,
-            "playing": self.playing
+            "queue": [track.toDict() for track in self.__queue],
+            "orig": [track.toDict() for track in self.__orig],
+            "current_index": self.__current_index,
+            "total_duration": self.__total_duration,
+            "repeat": self.__repeat,
+            "shuffle": self.__shuffle,
+            "playing": self.__playing
         }
         
         # Write data to 'queue.json'
@@ -224,13 +224,13 @@ class MusicQueue:
             data = json.load(file)
             self.source = data["source"]
             self.playlist_name = data.get("playlist_name")
-            self.queue = [Track.fromDict(track_data) for track_data in data["queue"]]
-            self.orig = [Track.fromDict(track_data) for track_data in data["orig"]]
-            self.current_index = data["current_index"]
-            self.total_duration = data["total_duration"]
-            self.repeat = data["repeat"]
-            self.shuffle = data["shuffle"]
-            self.playing = data["playing"]
+            self.__queue = [Track.fromDict(track_data) for track_data in data["queue"]]
+            self.__orig = [Track.fromDict(track_data) for track_data in data["orig"]]
+            self.__current_index = data["current_index"]
+            self.__total_duration = data["total_duration"]
+            self.__repeat = data["repeat"]
+            self.__shuffle = data["shuffle"]
+            self.__playing = data["playing"]
 
             
     def play(self):
@@ -268,6 +268,7 @@ class MusicQueue:
                 self.saveState()
             else:
                 self.saveState("Playlist", self.playlist_name)
+                
             self.displayQueue()
             print("\nOptions:")
             print("[1] Play")
