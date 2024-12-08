@@ -31,18 +31,20 @@ MENUS = {
     }
 }
 
-def showMenu(menu: str) -> None:
-     """
+def showMenu(menu: str) -> str:
+    """
     Displays the menu options for the specified menu.
 
     Parameters:
         menu (str): The name of the menu to display
 
     """
-
     if menu in MENUS:
-        for key, value in MENUS[menu].items():
-            print(f"[{key}] {value}")
+        keys = list(MENUS[menu])
+        for i in range(len(keys)):
+            print("[" + str(keys[i]) + "] " + MENUS[menu][keys[i]])
+    else:
+        print("Menu not found.")
 
 def should_quit(var: str) -> bool:
     """

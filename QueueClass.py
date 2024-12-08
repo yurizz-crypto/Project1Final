@@ -10,6 +10,8 @@ class MusicQueue:
         self.__repeat = False
         self.__shuffle = False
         self.__playing = False
+        self.source = None
+        self.playlist_name = None
 
     def addTrack(self, newTrack: Track):
 
