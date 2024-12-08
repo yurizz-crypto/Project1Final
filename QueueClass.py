@@ -139,7 +139,7 @@ class MusicQueue:
         
     def displayQueue(self, page=1, pageSize=10):
         self.updateTotalDuration()
-        print(f"\nTotal Duration: {self.formatDuration(self.total_duration)}")
+        print(f"\nTotal Duration: {self.formatDuration(self.__total_duration)}")
         print(f"Shuffle: {'Yes' if self.__shuffle else 'No'}")
         print(f"Repeat: {'Yes' if self.__repeat else 'No'}")
         print("\nTracks:")

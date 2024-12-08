@@ -98,7 +98,7 @@ class AVLTree:
         rootLeftRight = rootLeft.getRight()
         
         # Adjust pointers for rotation.
-        rootLeft.setRight(rootLeft)
+        rootLeft.setRight(root)
         root.setLeft(rootLeftRight)
         
         # Update heights after rotation.
@@ -129,6 +129,8 @@ class AVLTree:
         # Update heights after rotation.
         self.updateHeight(root)
         self.updateHeight(rootRight)
+        
+        return rootRight
     
     def autoRotate(self, node: AVLNode):
         

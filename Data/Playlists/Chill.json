@@ -1,0 +1,34 @@
+{
+  "name": "Chill",
+  "total_duration": "18:41",
+  "tracks": [
+    {
+      "title": "Just Dance",
+      "artist": "Lady Gaga, Colby O'Donis",
+      "additional_artists": [],
+      "album": "The Fame",
+      "duration": "04:02"
+    },
+    {
+      "title": "Bohemian Rhapsody",
+      "artist": "Queen",
+      "additional_artists": [],
+      "album": "A Night at the Opera",
+      "duration": "05:55"
+    },
+    {
+      "title": "Happier Than Ever",
+      "artist": "Billie Eilish",
+      "additional_artists": [],
+      "album": "Happier Than Ever",
+      "duration": "04:58"
+    },
+    {
+      "title": "Pantropiko",
+      "artist": "Bini",
+      "additional_artists": [],
+      "album": "Summer",
+      "duration": "03:46"
+    }
+  ]
+}
