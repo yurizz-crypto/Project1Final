@@ -32,14 +32,38 @@ MENUS = {
 }
 
 def showMenu(menu: str) -> None:
+     """
+    Displays the menu options for the specified menu.
+
+    Parameters:
+        menu (str): The name of the menu to display
+
+    """
+
     if menu in MENUS:
         for key, value in MENUS[menu].items():
             print(f"[{key}] {value}")
 
 def should_quit(var: str) -> bool:
+    """
+    Checks if the input variable indicates a request to quit.
+
+    Parameters:
+        var (str): The input variable to check.
+
+    Returns:
+        bool: True if the input is 'q' or 'Q', otherwise False.
+    """
     return var == "q" or var == "Q"
 
 def addTrackToPlaylist(musicLibrary: AVLTree, playlistName: str) -> None:
+    """
+    Adds a track to the specified playlist.
+
+    Parameters:
+        musicLibrary (AVLTree): The music library containing tracks.
+        playlistName (str): The name of the playlist to which the track will be added.
+    """
     playlist_obj = Playlist.loadFromJson(playlistName)
     if not playlist_obj:
         print(f"Playlist '{playlistName}' not found.")
@@ -84,18 +108,44 @@ def addTrackToPlaylist(musicLibrary: AVLTree, playlistName: str) -> None:
         playlist_obj.saveToJson()
 
 def showDuplicates(track_list: list) -> None:
+    """
+    Displays a list of duplicate tracks.
+
+    Parameters:
+        track_list (list): A list of duplicate track objects.
+
+    """
     print("\nDuplicates:")
     for track in track_list:
         print(track.__str__(True))
     print(f"\n{len(track_list)} results found...")
 
 def checkIfSpacesOnly(input_string: str):
+    """
+    Checks if the input string contains only spaces.
+
+    Parameters:
+        input_string (str): The string to check.
+
+    Returns:
+        bool: True if the string contains only spaces, otherwise False.
+    """
     for char in input_string:
         if char != " ":
             return False
     return True
 
 def spaceCleaner(input_string: str):
+    """
+    Cleans the input string by trimming leading and trailing spaces and reducing multiple spaces to a single space.
+
+    Parameters:
+        input_string (str): The string to clean.
+
+    Returns:
+        str: The cleaned string.
+    """
+
     start = 0
     while start < len(input_string) and input_string[start] == " ":
         start += 1
@@ -120,6 +170,12 @@ def spaceCleaner(input_string: str):
     return result
 
 def addTrack() -> Track | None | bool:
+    """
+    Prompts the user to add a new track to the music library.
+
+    Returns:
+        Track, None , bool: Returns a Track object if added successfully, None if canceled, or False if the track already exists.
+    """
     def validateAndFormatDuration(duration):
         """
         Parameters:
