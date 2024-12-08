@@ -570,7 +570,6 @@ def main():
                     if track:
                         print(f"Track {track.getTitle()} by {track.getArtist()} deleted.\n")
                         musicLibrary.removeTrack(track) # Delete the track from the library
-                        musicLibrary.saveToJson() # Save the updated library to a JSON file
                     else:
                         print("Artist not found.") 
                 elif found:                       # If there's no duplication, simply delete the track found by title
@@ -579,6 +578,8 @@ def main():
                 else:                             # If no track is found with the specified artist
                     print("Track not found.\n") 
 
+                musicLibrary.saveToJson() # Save the updated library to a JSON file
+                
             case "7":                     # Prompt the user to enter the playlist name where they want to add a track
                 playlistName = input("\nEnter playlist name ('q' to cancel): ")
                 if should_quit(playlistName):
