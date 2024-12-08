@@ -293,15 +293,16 @@ def playPlaylist(playlistName: str,musicLibrary:Track, queue: MusicQueue):
         print(f"Playlist '{playlistName}' not found.")
         return
 
-    queue.clearQueue()
+    queue.checkAndLoadState(source="Playlist", playlist_name=playlistName)
+    if queue.isQueueEmpty():
+        for track in playlist.getTracks():
+            queue.addTrack(track)
+        queue.saveState(source="Playlist", playlist_name=playlistName)
 
-    print(f"Loading playlist: {playlistName}")
-    for track in playlist.getTracks():
-        queue.addTrack(track)
-
-    queue.saveState()
     queue.play()
     queue.queueInterface()
+    queue.saveState(source="Playlist", playlist_name=playlistName)
+
 
 def main():
     """
@@ -325,19 +326,15 @@ def main():
                 break
             
             case "1":
-            # Play all tracks in music library
-                queue.clearQueue()
+                queue.checkAndLoadState(source="Library")
+                if queue.isQueueEmpty():
+                    for track in musicLibrary.getSortedTracks():
+                        queue.addTrack(track)
+                        queue.saveState()
 
-                # Add all sorted tracks to the queue
-                for track in musicLibrary.getSortedTracks():
-                    queue.addTrack(track)
-                
-                # Save the queue state
-                queue.saveState()
-                # Automatically toggle play
                 queue.play()
-                # Display queue interface for interaction
                 queue.queueInterface()
+                queue.saveState()
 
             case "2":
                 while True:
