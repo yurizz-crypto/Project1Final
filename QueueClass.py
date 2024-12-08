@@ -32,6 +32,9 @@ class MusicQueue:
         If at the end of the queue and repeat is not enabled it stops the playback
         
         """
+        if len(self.__queue) < 1:
+            return
+
         if self.__repeat:
             self.__currentIndex = (self.__currentIndex + 1) % len(self.__queue)
         else:
@@ -47,7 +50,7 @@ class MusicQueue:
         if the repeat mode is enabled it wraps around to the end of the queue 
         if at the start of the queue it does nothing
         """
-        if len(self.__queue) <= 1:
+        if len(self.__queue) < 1:
             return
     
         if self.__repeat:
