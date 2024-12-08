@@ -527,7 +527,7 @@ def main():
                 print("\n>>> Search for a Track <<<")
                 title = input("Enter title of the track ('q' to cancel): ")
                 if should_quit(title):
-                    continue
+                    continue   
 
                 duplicates = musicLibrary.getDuplicates(musicLibrary.getRoot(), title)
                 found = musicLibrary.searchTrack(title)
@@ -540,40 +540,46 @@ def main():
                 else:
                     print("Track not found.\n")
 
-            case "6":
+            case "6":       # Prompt user to enter the title of the track to delete
                 print("\n>>> Delete a Track <<<")
                 title = input("Enter title of the track ('q' to cancel): ")
-                if should_quit(title):
+                if should_quit(title):   # Check if the user wants to cancel the operation
                     print("Deletion Cancelled...\n")
-                    continue
+                    continue   # Exit the current loop and return to the main menu
 
+                
+                # Retrieve duplicates of the track in the music library
+                
                 duplicates = musicLibrary.getDuplicates(musicLibrary.getRoot(), title)
                 found = musicLibrary.searchTrack(title)
 
+                # If there are multiple duplicates, ask for the artist's name to identify the correct track
                 if len(duplicates) > 1:
                     showDuplicates(duplicates)
                     artist_name = input("Specify track artist ('q' to cancel): ")
-                    if should_quit(artist_name):
+                    if should_quit(artist_name):   # If the user cancels, move to the next loop
                         continue
 
+                    # Search for the track by both title and artist
                     track = musicLibrary.searchTrack(title, artist_name)
                     if track:
                         print(f"Track {track.getTitle()} by {track.getArtist()} deleted.\n")
-                        musicLibrary.removeTrack(track)
-                        musicLibrary.saveToJson()
+                        musicLibrary.removeTrack(track) # Delete the track from the library
+                        musicLibrary.saveToJson() # Save the updated library to a JSON file
                     else:
-                        print("Artist not found.")
-                elif found:
+                        print("Artist not found.") 
+                elif found:                       # If there's no duplication, simply delete the track found by title
                     musicLibrary.removeTrack(found)
                     print("Track deleted.\n")
-                else:
-                    print("Track not found.\n")
+                else:                             # If no track is found with the specified artist
+                    print("Track not found.\n") 
 
-            case "7":
+            case "7":                     # Prompt the user to enter the playlist name where they want to add a track
                 playlistName = input("\nEnter playlist name ('q' to cancel): ")
                 if should_quit(playlistName):
                     continue
 
+                # Add the track to the specified playlist
                 addTrackToPlaylist(musicLibrary, playlistName)
             
             case _:
