@@ -146,9 +146,9 @@ class MusicQueue:
         print(f"Repeat: {'Yes' if self.__repeat else 'No'}")
         print("\nTracks:")
 
-        if self.queue:
+        if self.__queue:
             print(f"Currently Playing {'(Playing)' if self.__playing else '(Paused)'}:")
-            print(f"\t{self.queue[self.__current_index].__str__(True)}\n")
+            print(f"\t{self.__queue[self.__current_index].__str__(True)}\n")
             print("Next:")
         else:
             print("\nNo track is currently playing.\n")
@@ -263,9 +263,11 @@ class MusicQueue:
         restoring the original order, or saving the current state upon exiting. 
         This ensures seamless interaction while maintaining the queue's state and behavior.
         """
-        self.loadState()
-
         while True:
+            if self.source == "Library":
+                self.saveState()
+            else:
+                self.saveState("Playlist", self.playlist_name)
             self.displayQueue()
             print("\nOptions:")
             print("[1] Play")
