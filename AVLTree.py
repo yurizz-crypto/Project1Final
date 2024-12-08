@@ -264,8 +264,8 @@ class AVLTree:
         
         self.__root = self.delete(self.__root, track)
         
-        for playlistName in Playlist.getPlaylists():
-            Playlist.loadFromJson(playlistName).removeTrack(track.getTitle(), track.getArtist())
+        for playlistName in Playlist.getPlaylistName():
+            Playlist.loadFromJson(playlistName).removeTrack(track.getTitle())
 
     def getDuplicates(self, node: AVLNode, title) -> list:
         """searches ang AVL tree for tracks with 
